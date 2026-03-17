@@ -28,6 +28,9 @@ router.get('/customer/:customerId', requireRole('admin', 'field_staff'), async (
   }
 })
 
+// TODO: /read/serialNo
+
+
 // get meter by serial number — used when QR code is scanned
 router.get('/scan/:serialNo', requireRole('admin', 'field_staff'), async (req, res) => {
   try {

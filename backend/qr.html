@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View QR Code</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin: 20px 0;
+            padding: 10px;
+            font-family: monospace;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .qr-container {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            min-height: 250px;
+        }
+        img {
+            max-width: 200px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .placeholder {
+            color: #999;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>QR Code Viewer</h1>
+        
+        <label for="qrUrl">Paste your QR code URL here:</label>
+        <textarea id="qrUrl" placeholder='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...'></textarea>
+        
+        <button onclick="viewQR()">View QR Code</button>
+        
+        <div class="qr-container" id="qrContainer">
+            <p class="placeholder">Your QR code will appear here</p>
+        </div>
+    </div>
+
+    <script>
+        function viewQR() {
+            const qrUrl = document.getElementById('qrUrl').value.trim();
+            const container = document.getElementById('qrContainer');
+            
+            if (!qrUrl) {
+                alert('Please paste a QR code URL');
+                return;
+            }
+            
+            // Clear container
+            container.innerHTML = '';
+            
+            // Create image element
+            const img = document.createElement('img');
+            img.src = qrUrl;
+            // img.alt = 'QR Code';
+            
+            // Add click to enlarge (optional)
+            img.style.cursor = 'pointer';
+            img.onclick = function() {
+                window.open(qrUrl, '_blank');
+            };
+            
+            container.appendChild(img);
+            
+            // Add info text
+            const info = document.createElement('p');
+            info.style.fontSize = '12px';
+            info.style.color = '#666';
+            info.style.marginTop = '10px';
+            // info.textContent = 'Click image to open in new tab';
+            container.appendChild(info);
+        }
+        
+        // Optional: Handle paste event
+        document.getElementById('qrUrl').addEventListener('paste', function(e) {
+            setTimeout(viewQR, 100);
+        });
+    </script>
+</body>
+</html>

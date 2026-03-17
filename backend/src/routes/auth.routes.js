@@ -2,17 +2,30 @@ import express from 'express'
 import * as authService from '../services/auth.service.js'
 import { verifyToken } from '../middlewares/verifyToken.js'
 import { sendSuccess, sendError } from '../utils/responseHelper.js'
+import { requireRole } from '../middlewares/requireRole.js'
 
 const router = express.Router()
 
-router.post('/register', async (req, res) => {
+// router.post('/register', async (req, res) => {
+//   try {
+//     const user = await authService.register(req.body)
+//     sendSuccess(res, user, 201, 'User registered successfully')
+//   } catch (err) {
+//     sendError(res, err.message, 400)
+//   }
+// })
+
+
+// register — admin only, not public
+router.post('/register', verifyToken, requireRole('admin'), async (req, res) => {
   try {
     const user = await authService.register(req.body)
-    sendSuccess(res, user, 201, 'User registered successfully')
+    sendSuccess(res, user, 201, 'User created successfully')
   } catch (err) {
     sendError(res, err.message, 400)
   }
 })
+
 
 router.post('/login', async (req, res) => {
   try {

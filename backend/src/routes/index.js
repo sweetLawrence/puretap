@@ -1,5 +1,6 @@
 import express from 'express'
 import authRoutes from './auth.routes.js'
+import userRoutes from './users.routes.js'
 import customerRoutes from './customers.routes.js'
 import meterRoutes from './meters.routes.js'
 import readingRoutes from './readings.routes.js'
@@ -13,6 +14,7 @@ import auditlogRoutes from './auditlogs.routes.js'
 const router = express.Router()
 
 router.use('/auth', authRoutes)
+router.use('/users', userRoutes)
 router.use('/customers', customerRoutes)
 router.use('/meters', meterRoutes)
 router.use('/readings', readingRoutes)
@@ -30,25 +32,28 @@ export default router
 
 // ### Test in Postman
 
-// **Get all logs**
+// **Get all users**
 // ```
-// GET http://localhost:5000/api/v1/audit-logs
+// GET http://localhost:5000/api/v1/users
 // Authorization: Bearer <token>
 // ```
 
-// **Filter by table**
+// **Create a new field staff — admin only**
 // ```
-// GET http://localhost:5000/api/v1/audit-logs?table_name=customers
+// POST http://localhost:5000/api/v1/auth/register
 // Authorization: Bearer <token>
+// Content-Type: application/json
+
+// {
+//   "full_name": "New Field Staff",
+//   "phone": "+254700000001",
+//   "email": "fieldstaff@puretap.co.ke",
+//   "password": "Staff@1234",
+//   "role": "field_staff"
+// }
 // ```
 
-// **Filter by date range**
+// **Deactivate a user**
 // ```
-// GET http://localhost:5000/api/v1/audit-logs?from=2025-01-01&to=2025-12-31
-// Authorization: Bearer <token>
-// ```
-
-// **Filter by action**
-// ```
-// GET http://localhost:5000/api/v1/audit-logs?action=CREATE
+// PATCH http://localhost:5000/api/v1/users/11/deactivate
 // Authorization: Bearer <token>
