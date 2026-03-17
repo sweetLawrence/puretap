@@ -5,6 +5,7 @@ import morgan from 'morgan'
 import dotenv from 'dotenv'
 import routes from './routes/index.js'
 import { errorHandler } from './middlewares/errorHandler.js'
+import { auditLog } from './middlewares/auditLog.js'
 
 dotenv.config()
 
@@ -14,6 +15,7 @@ app.use(helmet())
 app.use(cors())
 app.use(morgan('dev'))
 app.use(express.json())
+app.use(auditLog)
 
 app.use('/api/v1', routes)
 app.use(errorHandler)
