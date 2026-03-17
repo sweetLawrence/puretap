@@ -1,0 +1,16 @@
+id,serial_no,customer_id,installation_address,qr_code_url,is_active,installed_at,created_at,updated_at
+1,MTR-GT-00001,1,Plot 12 Gitaru Town,storage/qrcodes/MTR-GT-00001.png,true,2025-02-05 08:00:00,2025-02-05 08:00:00,2025-02-05 08:00:00
+2,MTR-GT-00002,2,Plot 34 Gitaru Town,storage/qrcodes/MTR-GT-00002.png,true,2025-02-05 08:30:00,2025-02-05 08:30:00,2025-02-05 08:30:00
+3,MTR-GT-00003,3,Plot 45 Gitaru Market,storage/qrcodes/MTR-GT-00003.png,true,2025-02-06 09:00:00,2025-02-06 09:00:00,2025-02-06 09:00:00
+4,MTR-GT-00004,4,Plot 7 Gitaru Estate,storage/qrcodes/MTR-GT-00004.png,true,2025-02-10 10:00:00,2025-02-10 10:00:00,2025-02-10 10:00:00
+5,MTR-GT-00005,5,Plot 22 Gitaru North,storage/qrcodes/MTR-GT-00005.png,true,2025-02-10 10:30:00,2025-02-10 10:30:00,2025-02-10 10:30:00
+6,MTR-GT-00006,6,Plot 88 Gitaru South,storage/qrcodes/MTR-GT-00006.png,false,2025-02-15 11:00:00,2025-02-15 11:00:00,2025-11-01 08:00:00
+7,MTR-GT-00007,7,Plot 3 Gitaru Central,storage/qrcodes/MTR-GT-00007.png,true,2025-03-02 08:00:00,2025-03-02 08:00:00,2025-03-02 08:00:00
+8,MTR-GT-00008,8,Plot 56 Gitaru West,storage/qrcodes/MTR-GT-00008.png,true,2025-03-12 09:00:00,2025-03-12 09:00:00,2025-03-12 09:00:00
+9,MTR-GT-00009,9,Plot 91 Gitaru East,storage/qrcodes/MTR-GT-00009.png,true,2025-03-12 09:30:00,2025-03-12 09:30:00,2025-03-12 09:30:00
+10,MTR-GT-00010,10,Main Street Gitaru,storage/qrcodes/MTR-GT-00010.png,true,2025-03-16 10:00:00,2025-03-16 10:00:00,2025-03-16 10:00:00
+11,MTR-GT-00011,11,Gitaru Market Row,storage/qrcodes/MTR-GT-00011.png,true,2025-03-16 10:30:00,2025-03-16 10:30:00,2025-03-16 10:30:00
+12,MTR-GT-00012,12,Plot 14 Gitaru Town,storage/qrcodes/MTR-GT-00012.png,true,2025-04-02 08:00:00,2025-04-02 08:00:00,2025-04-02 08:00:00
+13,MTR-GT-00013,13,Plot 101 Gitaru Hills,storage/qrcodes/MTR-GT-00013.png,true,2025-04-06 09:00:00,2025-04-06 09:00:00,2025-04-06 09:00:00
+14,MTR-GT-00014,14,Plot 77 Gitaru Ridge,storage/qrcodes/MTR-GT-00014.png,true,2025-04-06 09:30:00,2025-04-06 09:30:00,2025-04-06 09:30:00
+15,MTR-GT-00015,15,Gitaru Shopping Centre,storage/qrcodes/MTR-GT-00015.png,true,2025-04-11 10:00:00,2025-04-11 10:00:00,2025-04-11 10:00:00

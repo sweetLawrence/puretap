@@ -1,0 +1,16 @@
+id,user_id,action,table_name,record_id,old_data,new_data,ip_address,created_at
+1,1,CREATE_CUSTOMER,customers,1,,"{""account_no"":""GT-0001"",""full_name"":""Cynthia Obure""}",192.168.1.10,2025-02-01 09:00:00
+2,1,CREATE_METER,meters,1,,"{""serial_no"":""MTR-GT-00001"",""customer_id"":1}",192.168.1.10,2025-02-05 08:00:00
+3,3,CREATE_READING,readings,1,,"{""meter_id"":1,""current_reading"":18.50,""status"":""verified""}",192.168.1.22,2025-03-01 08:10:00
+4,1,CREATE_INVOICE,invoices,1,,"{""invoice_no"":""INV-2025-00001"",""total_amount"":756.00}",192.168.1.10,2025-03-01 09:00:00
+5,,PAYMENT_COMPLETED,payments,1,"{""status"":""pending""}","{""status"":""completed"",""mpesa_ref"":""QHJ7K2L9M3""}",,2025-03-20 10:00:00
+6,1,UPDATE_INVOICE_STATUS,invoices,1,"{""status"":""unpaid""}","{""status"":""paid""}",192.168.1.10,2025-03-20 10:00:00
+7,2,FLAG_READING,readings,10,"{""status"":""pending_review""}","{""status"":""flagged_ocr_mismatch"",""reviewer_notes"":""OCR unclear""}",192.168.1.11,2025-03-17 10:00:00
+8,4,CREATE_READING,readings,10,,"{""meter_id"":10,""current_reading"":120.00,""status"":""flagged_ocr_mismatch""}",192.168.1.25,2025-03-16 10:05:00
+9,1,DEACTIVATE_CUSTOMER,customers,6,"{""is_active"":true}","{""is_active"":false}",192.168.1.10,2025-11-01 08:00:00
+10,1,CREATE_TARIFF,tariffs,1,,"{""name"":""Domestic block 1"",""rate_per_unit"":0.00,""fixed_charge"":150.00}",192.168.1.10,2025-01-01 08:00:00
+11,3,CREATE_READING,readings,12,,"{""meter_id"":1,""current_reading"":45.00,""status"":""verified""}",192.168.1.22,2025-04-01 08:10:00
+12,2,REVIEW_READING,readings,14,"{""status"":""pending_review""}","{""status"":""flagged_anomaly"",""reviewer_notes"":""Possible leak""}",192.168.1.11,2025-04-02 09:00:00
+13,1,RECORD_PAYMENT,payments,3,,"{""amount"":1925.00,""method"":""bank_transfer"",""status"":""completed""}",192.168.1.10,2025-03-25 14:00:00
+14,5,LOGIN,users,5,,"{""last_login_at"":""2026-03-14 08:00:00""}",41.90.64.15,2026-03-14 08:00:00
+15,1,UPDATE_TARIFF,tariffs,6,"{""is_active"":true}","{""is_active"":false}",192.168.1.10,2025-01-01 07:00:00

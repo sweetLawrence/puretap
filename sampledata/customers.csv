@@ -1,0 +1,16 @@
+id,full_name,phone,email,address,account_no,customer_type,is_active,portal_user_id,created_at,updated_at
+1,Cynthia Obure,+254701234566,cynthia.obure@puretap.co.ke,Plot 12 Gitaru Town,GT-0001,domestic,true,6,2025-02-01 09:00:00,2025-02-01 09:00:00
+2,Peter Njoroge,+254701234567,peter.njoroge@gmail.com,Plot 34 Gitaru Town,GT-0002,domestic,true,7,2025-02-01 09:10:00,2025-02-01 09:10:00
+3,Mary Akinyi,+254701234568,mary.akinyi@gmail.com,Plot 45 Gitaru Market,GT-0003,domestic,true,8,2025-02-01 09:20:00,2025-02-01 09:20:00
+4,Samuel Kiptoo,+254701234569,samuel.kiptoo@gmail.com,Plot 7 Gitaru Estate,GT-0004,domestic,true,9,2025-02-10 10:00:00,2025-02-10 10:00:00
+5,Faith Wambui,+254701234570,faith.wambui@gmail.com,Plot 22 Gitaru North,GT-0005,domestic,true,10,2025-02-10 10:10:00,2025-02-10 10:10:00
+6,David Ochieng,+254701234571,david.ochieng@gmail.com,Plot 88 Gitaru South,GT-0006,domestic,false,11,2025-02-15 11:00:00,2025-11-01 08:00:00
+7,Rose Mutua,+254701234572,rose.mutua@gmail.com,Plot 3 Gitaru Central,GT-0007,domestic,true,12,2025-03-01 08:00:00,2025-03-01 08:00:00
+8,Lilian Chebet,+254701234574,lilian.chebet@gmail.com,Plot 56 Gitaru West,GT-0008,domestic,true,14,2025-03-10 09:00:00,2025-03-10 09:00:00
+9,Moses Karanja,+254701234575,moses.karanja@gmail.com,Plot 91 Gitaru East,GT-0009,domestic,true,15,2025-03-10 09:10:00,2025-03-10 09:10:00
+10,Gitaru Supermarket Ltd,+254720111001,accounts@gitarusuper.co.ke,Main Street Gitaru,GT-0010,commercial,true,null,2025-03-15 10:00:00,2025-03-15 10:00:00
+11,Wambua Hardware,+254720111002,wambua.hardware@gmail.com,Gitaru Market Row,GT-0011,commercial,true,null,2025-03-15 10:10:00,2025-03-15 10:10:00
+12,Njambi Salon,+254720111003,null,Plot 14 Gitaru Town,GT-0012,commercial,true,null,2025-04-01 08:00:00,2025-04-01 08:00:00
+13,Tom Odhiambo,+254701234580,null,Plot 101 Gitaru Hills,GT-0013,domestic,true,null,2025-04-05 09:00:00,2025-04-05 09:00:00
+14,Jane Muthoni,+254701234581,null,Plot 77 Gitaru Ridge,GT-0014,domestic,true,null,2025-04-05 09:15:00,2025-04-05 09:15:00
+15,Kariuki Stores,+254720111004,kariuki.stores@gmail.com,Gitaru Shopping Centre,GT-0015,commercial,true,null,2025-04-10 10:00:00,2025-04-10 10:00:00

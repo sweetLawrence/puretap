@@ -1,0 +1,16 @@
+id,full_name,phone,email,password_hash,role,is_active,last_login_at,refresh_token_hash,created_at,updated_at
+1,James Otieno,+254701234561,james.otieno@puretap.co.ke,$2b$12$hashed_password_001,admin,true,2026-03-10 08:22:00,,2025-01-01 08:00:00,2026-03-10 08:22:00
+2,Grace Wanjiku,+254701234562,grace.wanjiku@puretap.co.ke,$2b$12$hashed_password_002,admin,true,2026-03-11 09:15:00,,2025-01-01 08:05:00,2026-03-11 09:15:00
+3,Brian Kamau,+254701234563,brian.kamau@puretap.co.ke,$2b$12$hashed_password_003,field_staff,true,2026-03-15 07:30:00,,2025-01-05 08:00:00,2026-03-15 07:30:00
+4,Eunice Adhiambo,+254701234564,eunice.adhiambo@puretap.co.ke,$2b$12$hashed_password_004,field_staff,true,2026-03-15 07:45:00,,2025-01-05 08:10:00,2026-03-15 07:45:00
+5,Kevin Mwangi,+254701234565,kevin.mwangi@puretap.co.ke,$2b$12$hashed_password_005,field_staff,true,2026-03-14 08:00:00,,2025-01-05 08:20:00,2026-03-14 08:00:00
+6,Alex Githinji,+254701234573,alex.githinji@puretap.co.ke,$2b$12$hashed_password_006,field_staff,true,2026-03-15 07:55:00,,2025-03-01 08:10:00,2026-03-15 07:55:00
+7,Lena Oduya,+254701234576,lena.oduya@puretap.co.ke,$2b$12$hashed_password_007,field_staff,true,2026-03-13 08:10:00,,2025-03-05 09:00:00,2026-03-13 08:10:00
+8,Collins Barasa,+254701234577,collins.barasa@puretap.co.ke,$2b$12$hashed_password_008,field_staff,true,2026-03-12 07:50:00,,2025-03-05 09:10:00,2026-03-12 07:50:00
+9,Mercy Nduta,+254701234578,mercy.nduta@puretap.co.ke,$2b$12$hashed_password_009,admin,true,2026-03-10 09:00:00,,2025-04-01 08:00:00,2026-03-10 09:00:00
+10,Victor Onyango,+254701234579,victor.onyango@puretap.co.ke,$2b$12$hashed_password_010,field_staff,true,2026-03-15 08:05:00,,2025-04-01 08:10:00,2026-03-15 08:05:00
+11,Irene Waweru,+254701234582,irene.waweru@puretap.co.ke,$2b$12$hashed_password_011,field_staff,false,2025-10-01 08:00:00,,2025-04-10 09:00:00,2025-10-15 08:00:00
+12,Dennis Kiprop,+254701234583,dennis.kiprop@puretap.co.ke,$2b$12$hashed_password_012,field_staff,true,2026-03-14 07:45:00,,2025-05-01 08:00:00,2026-03-14 07:45:00
+13,Beatrice Auma,+254701234584,beatrice.auma@puretap.co.ke,$2b$12$hashed_password_013,admin,true,2026-03-11 10:00:00,,2025-05-01 08:10:00,2026-03-11 10:00:00
+14,Patrick Kimani,+254701234585,patrick.kimani@puretap.co.ke,$2b$12$hashed_password_014,field_staff,true,2026-03-15 08:20:00,,2025-06-01 09:00:00,2026-03-15 08:20:00
+15,Stella Moraa,+254701234586,stella.moraa@puretap.co.ke,$2b$12$hashed_password_015,field_staff,true,2026-03-13 07:40:00,,2025-06-01 09:10:00,2026-03-13 07:40:00

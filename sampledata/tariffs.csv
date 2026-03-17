@@ -1,0 +1,16 @@
+id,name,customer_type,min_units,max_units,rate_per_unit,fixed_charge,is_active,effective_from,created_at,updated_at
+1,Domestic block 1,domestic,0.00,6.00,0.00,150.00,true,2025-01-01,2025-01-01 08:00:00,2025-01-01 08:00:00
+2,Domestic block 2,domestic,6.00,20.00,45.00,150.00,true,2025-01-01,2025-01-01 08:00:00,2025-01-01 08:00:00
+3,Domestic block 3,domestic,20.00,50.00,65.00,150.00,true,2025-01-01,2025-01-01 08:00:00,2025-01-01 08:00:00
+4,Domestic block 4,domestic,50.00,null,90.00,150.00,true,2025-01-01,2025-01-01 08:00:00,2025-01-01 08:00:00
+5,Commercial block 1,commercial,0.00,null,110.00,500.00,true,2025-01-01,2025-01-01 08:00:00,2025-01-01 08:00:00
+6,Domestic block 1 revised,domestic,0.00,6.00,0.00,175.00,false,2024-01-01,2024-01-01 08:00:00,2025-01-01 07:00:00
+7,Domestic block 2 revised,domestic,6.00,20.00,40.00,175.00,false,2024-01-01,2024-01-01 08:00:00,2025-01-01 07:00:00
+8,Domestic block 3 revised,domestic,20.00,50.00,60.00,175.00,false,2024-01-01,2024-01-01 08:00:00,2025-01-01 07:00:00
+9,Domestic block 4 revised,domestic,50.00,null,85.00,175.00,false,2024-01-01,2024-01-01 08:00:00,2025-01-01 07:00:00
+10,Commercial block 1 revised,commercial,0.00,null,100.00,450.00,false,2024-01-01,2024-01-01 08:00:00,2025-01-01 07:00:00
+11,Commercial block 2,commercial,0.00,50.00,110.00,500.00,false,2025-01-01,2025-01-01 08:30:00,2025-01-01 08:30:00
+12,Commercial block 3,commercial,50.00,200.00,130.00,500.00,false,2025-01-01,2025-01-01 08:30:00,2025-01-01 08:30:00
+13,Commercial block 4,commercial,200.00,null,155.00,500.00,false,2025-01-01,2025-01-01 08:30:00,2025-01-01 08:30:00
+14,Domestic low income,domestic,0.00,10.00,0.00,100.00,false,2025-01-01,2025-01-01 09:00:00,2025-01-01 09:00:00
+15,Domestic standard,domestic,10.00,30.00,50.00,100.00,false,2025-01-01,2025-01-01 09:00:00,2025-01-01 09:00:00

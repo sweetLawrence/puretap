@@ -1,0 +1,16 @@
+id,full_name,phone,email,password_hash,role,is_active,last_login_at,refresh_token_hash,created_at,updated_at
+1,James Otieno,+254701234561,james.otieno@puretap.co.ke,$2b$12$hashed_password_001,admin,true,2026-03-10 08:22:00,null,2025-01-01 08:00:00,2026-03-10 08:22:00
+2,Grace Wanjiku,+254701234562,grace.wanjiku@puretap.co.ke,$2b$12$hashed_password_002,admin,true,2026-03-11 09:15:00,null,2025-01-01 08:05:00,2026-03-11 09:15:00
+3,Brian Kamau,+254701234563,brian.kamau@puretap.co.ke,$2b$12$hashed_password_003,field_staff,true,2026-03-15 07:30:00,null,2025-01-05 08:00:00,2026-03-15 07:30:00
+4,Eunice Adhiambo,+254701234564,eunice.adhiambo@puretap.co.ke,$2b$12$hashed_password_004,field_staff,true,2026-03-15 07:45:00,null,2025-01-05 08:10:00,2026-03-15 07:45:00
+5,Kevin Mwangi,+254701234565,kevin.mwangi@puretap.co.ke,$2b$12$hashed_password_005,field_staff,true,2026-03-14 08:00:00,null,2025-01-05 08:20:00,2026-03-14 08:00:00
+6,Cynthia Obure,+254701234566,cynthia.obure@puretap.co.ke,$2b$12$hashed_password_006,customer,true,2026-03-12 10:00:00,null,2025-02-01 09:00:00,2026-03-12 10:00:00
+7,Peter Njoroge,+254701234567,peter.njoroge@gmail.com,$2b$12$hashed_password_007,customer,true,2026-03-01 11:00:00,null,2025-02-01 09:10:00,2026-03-01 11:00:00
+8,Mary Akinyi,+254701234568,mary.akinyi@gmail.com,$2b$12$hashed_password_008,customer,true,2026-02-20 14:00:00,null,2025-02-01 09:20:00,2026-02-20 14:00:00
+9,Samuel Kiptoo,+254701234569,samuel.kiptoo@gmail.com,$2b$12$hashed_password_009,customer,true,2026-03-05 16:00:00,null,2025-02-10 10:00:00,2026-03-05 16:00:00
+10,Faith Wambui,+254701234570,faith.wambui@gmail.com,$2b$12$hashed_password_010,customer,true,2026-03-08 09:00:00,null,2025-02-10 10:10:00,2026-03-08 09:00:00
+11,David Ochieng,+254701234571,david.ochieng@gmail.com,$2b$12$hashed_password_011,customer,false,null,null,2025-02-15 11:00:00,2025-11-01 08:00:00
+12,Rose Mutua,+254701234572,rose.mutua@gmail.com,$2b$12$hashed_password_012,customer,true,2026-03-09 10:30:00,null,2025-03-01 08:00:00,2026-03-09 10:30:00
+13,Alex Githinji,+254701234573,alex.githinji@gmail.com,$2b$12$hashed_password_013,field_staff,true,2026-03-15 07:55:00,null,2025-03-01 08:10:00,2026-03-15 07:55:00
+14,Lilian Chebet,+254701234574,lilian.chebet@gmail.com,$2b$12$hashed_password_014,customer,true,2026-03-10 12:00:00,null,2025-03-10 09:00:00,2026-03-10 12:00:00
+15,Moses Karanja,+254701234575,moses.karanja@gmail.com,$2b$12$hashed_password_015,customer,true,2026-03-11 15:00:00,null,2025-03-10 09:10:00,2026-03-11 15:00:00
