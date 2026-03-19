@@ -19,7 +19,7 @@ interface AuditLog {
 }
 
 export default function AuditLogs() {
-  const [logs, setLogs] = useState<AuditLog[]>([])
+  const [_logs, setLogs] = useState<AuditLog[]>([])
   const [filtered, setFiltered] = useState<AuditLog[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
