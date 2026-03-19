@@ -12,6 +12,7 @@
   "dependencies": {
     "@mantine/core": "^8.3.18",
     "@mantine/hooks": "^8.3.18",
+    "@supabase/supabase-js": "^2.99.3",
     "@tailwindcss/vite": "^4.2.2",
     "axios": "^1.13.6",
     "dayjs": "^1.11.20",
