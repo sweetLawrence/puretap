@@ -7,5 +7,5 @@ const PORT = process.env.PORT || 5000
 
 app.listen(PORT, () => {
   console.log(`PureTap API running on port ${PORT}`)
-  startAllJobs()
+//   startAllJobs()
 })

@@ -18,6 +18,18 @@ router.get('/', requireRole('admin'), async (req, res) => {
   }
 })
 
+
+// get all QR codes for dashboard display
+router.get('/qrcodes', requireRole('admin'), async (req, res) => {
+  try {
+    const qrcodes = await metersService.getAllQRCodes()
+    sendSuccess(res, qrcodes)
+  } catch (err) {
+    sendError(res, err.message, 400)
+  }
+})
+
+
 // get meters by customer — admin and field_staff
 router.get('/customer/:customerId', requireRole('admin', 'field_staff'), async (req, res) => {
   try {
@@ -60,6 +72,31 @@ router.post('/', requireRole('admin'), async (req, res) => {
     sendError(res, err.message, 400)
   }
 })
+
+
+
+
+// regenerate QR code for a meter
+router.patch('/:id/regenerate-qr', requireRole('admin'), async (req, res) => {
+  try {
+    const meter = await metersService.regenerateQR(req.params.id)
+    sendSuccess(res, meter, 200, 'QR code regenerated successfully')
+  } catch (err) {
+    sendError(res, err.message, 400)
+  }
+})
+// ```
+
+// ---
+
+// ### Test in Postman
+// ```
+// PATCH http://localhost:5000/api/v1/meters/1/regenerate-qr
+// Authorization: Bearer <token>
+
+
+
+
 
 // update meter — admin only
 router.patch('/:id', requireRole('admin'), async (req, res) => {
