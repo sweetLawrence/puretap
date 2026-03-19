@@ -11,8 +11,13 @@ import Readings from './pages/Readings'
 
 import Users from './pages/Users'
 import Tariffs from './pages/Tariffs'
-
-
+import Invoices from './pages/Invoices'
+import Payments from './pages/Payments'
+import Reports from './pages/Reports'
+import Notifications from './pages/Notifications'
+import AuditLogs from './pages/AuditLogs'
+import SubmitReading from './pages/SubmitReading'
+import MyReadings from './pages/Myreadings'
 
 const router = createBrowserRouter([
   {
@@ -24,14 +29,7 @@ const router = createBrowserRouter([
         element: <Login />
       },
 
-      {
-        path: '/unauthorized',
-        element: (
-          <div className='min-h-screen bg-back-500 flex items-center justify-center'>
-            <p className='text-text-500 text-lg'>Access denied.</p>
-          </div>
-        )
-      },
+    
       {
         path: '/',
         element: (
@@ -43,7 +41,7 @@ const router = createBrowserRouter([
           {
             path: 'dashboard',
             element: (
-              <AuthGuard allowedRoles={['admin']}>
+              <AuthGuard allowedRoles={['admin','field_staff']}>
                 <Dashboard />
               </AuthGuard>
             )
@@ -66,7 +64,7 @@ const router = createBrowserRouter([
           },
           {
             path: 'readings',
-           element: (
+            element: (
               <AuthGuard allowedRoles={['admin']}>
                 <Readings />
               </AuthGuard>
@@ -74,7 +72,7 @@ const router = createBrowserRouter([
           },
           {
             path: 'tariffs',
-             element: (
+            element: (
               <AuthGuard allowedRoles={['admin']}>
                 <Tariffs />
               </AuthGuard>
@@ -83,36 +81,46 @@ const router = createBrowserRouter([
           {
             path: 'invoices',
             element: (
-              <div className='p-4 text-text-500'>Invoices coming soon</div>
+              <AuthGuard allowedRoles={['admin']}>
+                <Invoices />
+              </AuthGuard>
             )
           },
           {
             path: 'payments',
             element: (
-              <div className='p-4 text-text-500'>Payments coming soon</div>
+              <AuthGuard allowedRoles={['admin']}>
+                <Payments />
+              </AuthGuard>
             )
           },
           {
             path: 'reports',
             element: (
-              <div className='p-4 text-text-500'>Reports coming soon</div>
+              <AuthGuard allowedRoles={['admin']}>
+                <Reports />
+              </AuthGuard>
             )
           },
           {
             path: 'notifications',
             element: (
-              <div className='p-4 text-text-500'>Notifications coming soon</div>
+              <AuthGuard allowedRoles={['admin']}>
+                <Notifications />
+              </AuthGuard>
             )
           },
           {
             path: 'audit-logs',
             element: (
-              <div className='p-4 text-text-500'>Audit logs coming soon</div>
+              <AuthGuard allowedRoles={['admin']}>
+                <AuditLogs />
+              </AuthGuard>
             )
           },
           {
             path: 'users',
-                element: (
+            element: (
               <AuthGuard allowedRoles={['admin']}>
                 <Users />
               </AuthGuard>
@@ -121,17 +129,27 @@ const router = createBrowserRouter([
           {
             path: 'submit-reading',
             element: (
-              <div className='p-4 text-text-500'>
-                Submit reading coming soon
-              </div>
+              <AuthGuard allowedRoles={['admin','field_staff']}>
+                <SubmitReading />
+              </AuthGuard>
             )
           },
           {
             path: 'my-readings',
-            element: (
-              <div className='p-4 text-text-500'>My readings coming soon</div>
+           element: (
+              <AuthGuard allowedRoles={['admin','field_staff']}>
+                <MyReadings />
+              </AuthGuard>
             )
-          }
+          },
+            {
+        path: '/unauthorized',
+        element: (
+          <div className='min-h-screen bg-back-500 flex items-center justify-center'>
+            <p className='text-text-500 text-lg'>Access denied.</p>
+          </div>
+        )
+      },
         ]
       }
     ]

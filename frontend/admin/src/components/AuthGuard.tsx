@@ -8,12 +8,15 @@ interface Props {
 
 export default function AuthGuard({ children, allowedRoles }: Props) {
   if (!isAuthenticated()) {
-    return <Navigate to="/login" replace />
+    return <Navigate to="/" replace />
   }
 
   if (allowedRoles) {
+   
     const user = JSON.parse(localStorage.getItem('user') || '{}')
+     console.log("XXXXXXXXXXXXXX",user.role,allowedRoles)
     if (!allowedRoles.includes(user.role)) {
+      
       return <Navigate to="/unauthorized" replace />
     }
   }

@@ -15,15 +15,21 @@
     "@tailwindcss/vite": "^4.2.2",
     "axios": "^1.13.6",
     "dayjs": "^1.11.20",
+    "jsqr": "^1.4.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.13.1",
-    "tailwindcss": "^4.2.2"
+    "react-webcam": "^7.2.0",
+    "recharts": "^3.8.0",
+    "tailwindcss": "^4.2.2",
+    "tesseract.js": "^7.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
+    "@types/react-webcam": "^1.1.0",
+    "@types/recharts": "^1.8.29",
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
