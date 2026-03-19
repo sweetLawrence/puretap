@@ -11,6 +11,11 @@ dotenv.config()
 
 const app = express()
 
+app.get('/', (req, res) => {
+  res.json({ message: 'PURETAP SYSTEM IS ACTIVE' })
+})
+
+
 app.use(helmet())
 app.use(cors())
 app.use(morgan('dev'))

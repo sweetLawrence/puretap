@@ -447,6 +447,7 @@ export default function Invoices() {
             placeholder="Status" 
             value={statusFilter}
             onChange={setStatusFilter} 
+            label="Filter by Status"
             clearable 
             radius="md" 
             w={160}

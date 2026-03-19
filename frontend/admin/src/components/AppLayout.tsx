@@ -365,7 +365,7 @@ export default function AppLayout () {
       {/* Sidebar */}
       <AppShell.Navbar p='sm' className='bg-white border-r border-gray-100'>
         <ScrollArea className='flex-1'>
-          <div className='flex flex-col gap-3'>
+          <div className='flex flex-col gap-5'>
             {filtered.map(item => (
               <NavLink 
               key={item.path} item={item} />
