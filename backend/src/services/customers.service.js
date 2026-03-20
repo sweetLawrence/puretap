@@ -74,13 +74,42 @@ export const deactivate = async (id) => {
   return data
 }
 
+// export const search = async (query) => {
+//   const { data, error } = await supabase
+//     .from('customers')
+//     .select('*')
+//     .or(`full_name.ilike.%${query}%,phone.ilike.%${query}%,account_no.ilike.%${query}%`)
+//     .order('full_name', { ascending: true })
+
+//   if (error) throw new Error(error.message)
+//   return data
+// }
+
+
+
 export const search = async (query) => {
   const { data, error } = await supabase
     .from('customers')
     .select('*')
-    .or(`full_name.ilike.%${query}%,phone.ilike.%${query}%,account_no.ilike.%${query}%`)
+    .ilike('full_name', `%${query}%`)
     .order('full_name', { ascending: true })
 
   if (error) throw new Error(error.message)
-  return data
+
+  // also search by phone and account_no separately and merge
+  const { data: byPhone } = await supabase
+    .from('customers')
+    .select('*')
+    .ilike('phone', `%${query}%`)
+
+  const { data: byAccount } = await supabase
+    .from('customers')
+    .select('*')
+    .ilike('account_no', `%${query}%`)
+
+  // merge and deduplicate by id
+  const all = [...(data || []), ...(byPhone || []), ...(byAccount || [])]
+  const unique = Array.from(new Map(all.map(c => [c.id, c])).values())
+
+  return unique
 }

@@ -10,6 +10,7 @@ const router = express.Router()
 router.post('/mpesa/callback', async (req, res) => {
   try {
     const result = await paymentsService.mpesaCallback(req.body)
+    console.log('MPESA CALLBACK:', JSON.stringify(req.body, null, 2))
     res.status(200).json({ ResultCode: 0, ResultDesc: 'Success' })
   } catch (err) {
     res.status(200).json({ ResultCode: 0, ResultDesc: 'Received' })
@@ -29,7 +30,8 @@ router.get('/', requireRole('admin'), async (req, res) => {
 })
 
 // get payments by customer
-router.get('/customer/:customerId', requireRole('admin'), async (req, res) => {
+// router.get('/customer/:customerId', requireRole('admin'), async (req, res) => {
+  router.get('/customer/:customerId', verifyToken, async (req, res) => {
   try {
     const payments = await paymentsService.getByCustomerId(req.params.customerId)
     sendSuccess(res, payments)
@@ -49,11 +51,12 @@ router.get('/:id', requireRole('admin'), async (req, res) => {
 })
 
 // initiate mpesa stk push
-router.post('/mpesa/initiate', requireRole('admin', 'field_staff'), async (req, res) => {
+// router.post('/mpesa/initiate', requireRole('admin', 'field_staff'), async (req, res) => {
+  router.post('/mpesa/initiate', verifyToken, requireRole('admin', 'field_staff', 'customer'), async (req, res) => {
   try {
     const { invoice_id, phone } = req.body
     if (!invoice_id || !phone) return sendError(res, 'invoice_id and phone are required', 400)
-    const result = await paymentsService.initiateStkPush(invoice_id, phone)
+    const result = await paymentsService.initiateStkPush(invoice_id,String(phone).trim())
     sendSuccess(res, result, 200, 'STK push sent to customer phone')
   } catch (err) {
     sendError(res, err.message, 400)

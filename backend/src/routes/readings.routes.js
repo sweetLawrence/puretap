@@ -29,7 +29,8 @@ router.get('/flagged', requireRole('admin'), async (req, res) => {
 })
 
 // get readings by meter
-router.get('/meter/:meterId', requireRole('admin', 'field_staff'), async (req, res) => {
+// router.get('/meter/:meterId', requireRole('admin', 'field_staff'), async (req, res) => {
+  router.get('/meter/:meterId', verifyToken, async (req, res) => {
   try {
     const readings = await readingsService.getByMeterId(req.params.meterId)
     sendSuccess(res, readings)
@@ -39,7 +40,8 @@ router.get('/meter/:meterId', requireRole('admin', 'field_staff'), async (req, r
 })
 
 // get last reading for a meter — used by frontend to pre-fill previous reading
-router.get('/meter/:meterId/last', requireRole('admin', 'field_staff'), async (req, res) => {
+// router.get('/meter/:meterId/last', requireRole('admin', 'field_staff'), async (req, res) => {
+  router.get('/meter/:meterId/last', verifyToken, async (req, res) => {
   try {
     const reading = await readingsService.getLastReading(req.params.meterId)
     sendSuccess(res, reading)

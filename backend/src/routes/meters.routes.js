@@ -31,7 +31,8 @@ router.get('/qrcodes', requireRole('admin'), async (req, res) => {
 
 
 // get meters by customer — admin and field_staff
-router.get('/customer/:customerId', requireRole('admin', 'field_staff'), async (req, res) => {
+// router.get('/customer/:customerId', requireRole('admin', 'field_staff'), async (req, res) => {
+  router.get('/customer/:customerId', verifyToken, requireRole('admin', 'field_staff', 'customer'), async (req, res) => {
   try {
     const meters = await metersService.getByCustomerId(req.params.customerId)
     sendSuccess(res, meters)

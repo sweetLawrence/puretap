@@ -14,6 +14,70 @@ const getMpesaToken = async () => {
   return data.access_token
 }
 
+// export const initiateStkPush = async (invoice_id, phone) => {
+//   const { data: invoice, error } = await supabase
+//     .from('invoices')
+//     .select(`*, customers (id, full_name, phone)`)
+//     .eq('id', invoice_id)
+//     .single()
+
+//   if (error || !invoice) throw new Error('Invoice not found')
+//   if (invoice.status === 'paid') throw new Error('Invoice is already paid')
+
+//   const token = await getMpesaToken()
+
+//   const timestamp = new Date()
+//     .toISOString()
+//     .replace(/[-T:.Z]/g, '')
+//     .slice(0, 14)
+
+//   const password = Buffer.from(
+//     `${process.env.MPESA_SHORTCODE}${process.env.MPESA_PASSKEY}${timestamp}`
+//   ).toString('base64')
+
+//   const mpesa_phone = phone.replace('+', '')
+
+//   const { data: stkResponse } = await axios.post(
+//     'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest',
+//     {
+//       BusinessShortCode: process.env.MPESA_SHORTCODE,
+//       Password: password,
+//       Timestamp: timestamp,
+//       TransactionType: 'CustomerPayBillOnline',
+//       Amount: Math.ceil(invoice.total_amount),
+//       PartyA: mpesa_phone,
+//       PartyB: process.env.MPESA_SHORTCODE,
+//       PhoneNumber: mpesa_phone,
+//       CallBackURL: process.env.MPESA_CALLBACK_URL,
+//       AccountReference: invoice.invoice_no,
+//       TransactionDesc: `Payment for ${invoice.invoice_no}`
+//     },
+//     { headers: { Authorization: `Bearer ${token}` } }
+//   )
+
+//   // save pending payment record
+//   const { data: payment, error: paymentError } = await supabase
+//     .from('payments')
+//     .insert({
+//       invoice_id,
+//       customer_id: invoice.customer_id,
+//       amount: invoice.total_amount,
+//       method: 'mpesa',
+//       status: 'pending',
+//       mpesa_phone: phone,
+//       payment_date: new Date(),
+//       created_at: new Date(),
+//       updated_at: new Date()
+//     })
+//     .select()
+//     .single()
+
+//   if (paymentError) throw new Error(paymentError.message)
+
+//   return { payment, stkResponse }
+// }
+
+
 export const initiateStkPush = async (invoice_id, phone) => {
   const { data: invoice, error } = await supabase
     .from('invoices')
@@ -37,45 +101,72 @@ export const initiateStkPush = async (invoice_id, phone) => {
 
   const mpesa_phone = phone.replace('+', '')
 
-  const { data: stkResponse } = await axios.post(
-    'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest',
-    {
-      BusinessShortCode: process.env.MPESA_SHORTCODE,
-      Password: password,
-      Timestamp: timestamp,
-      TransactionType: 'CustomerPayBillOnline',
-      Amount: Math.ceil(invoice.total_amount),
-      PartyA: mpesa_phone,
-      PartyB: process.env.MPESA_SHORTCODE,
-      PhoneNumber: mpesa_phone,
-      CallBackURL: process.env.MPESA_CALLBACK_URL,
-      AccountReference: invoice.invoice_no,
-      TransactionDesc: `Payment for ${invoice.invoice_no}`
-    },
-    { headers: { Authorization: `Bearer ${token}` } }
-  )
+  console.log('MPESA PAYLOAD:', {
+    BusinessShortCode: process.env.MPESA_SHORTCODE,
+    Timestamp: timestamp,
+    Amount: Math.ceil(invoice.total_amount),
+    PartyA: mpesa_phone,
+    PartyB: process.env.MPESA_SHORTCODE,
+    PhoneNumber: mpesa_phone,
+    CallBackURL: process.env.MPESA_CALLBACK_URL,
+    AccountReference: invoice.invoice_no,
+  })
 
-  // save pending payment record
-  const { data: payment, error: paymentError } = await supabase
-    .from('payments')
-    .insert({
-      invoice_id,
-      customer_id: invoice.customer_id,
-      amount: invoice.total_amount,
-      method: 'mpesa',
-      status: 'pending',
-      mpesa_phone: phone,
-      payment_date: new Date(),
-      created_at: new Date(),
-      updated_at: new Date()
-    })
-    .select()
-    .single()
+  try {
+    const { data: stkResponse } = await axios.post(
+      'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest',
+      {
+        BusinessShortCode: process.env.MPESA_SHORTCODE,
+        Password: password,
+        Timestamp: timestamp,
+        TransactionType: 'CustomerPayBillOnline',
+        Amount: Math.ceil(invoice.total_amount),
+        PartyA: mpesa_phone,
+        PartyB: process.env.MPESA_SHORTCODE,
+        PhoneNumber: mpesa_phone,
+        CallBackURL: process.env.MPESA_CALLBACK_URL,
+        AccountReference: invoice.invoice_no,
+        TransactionDesc: `Payment for ${invoice.invoice_no}`
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
 
-  if (paymentError) throw new Error(paymentError.message)
+    console.log('MPESA RESPONSE:', stkResponse)
 
-  return { payment, stkResponse }
+    const { data: payment, error: paymentError } = await supabase
+      .from('payments')
+      .insert({
+        invoice_id,
+        customer_id: invoice.customer_id,
+        amount: invoice.total_amount,
+        method: 'mpesa',
+        status: 'pending',
+        mpesa_phone: phone,
+        payment_date: new Date(),
+        created_at: new Date(),
+        updated_at: new Date()
+      })
+      .select()
+      .single()
+
+    if (paymentError) throw new Error(paymentError.message)
+    return { payment, stkResponse }
+
+  } catch (err) {
+    console.error('MPESA ERROR FULL:', err.response?.data)
+    throw new Error(err.response?.data?.errorMessage || err.message)
+  }
 }
+
+
+
+
+
+
+
+
+
+
 
 export const mpesaCallback = async (callbackData) => {
   const body = callbackData.Body.stkCallback

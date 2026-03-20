@@ -1,68 +1,126 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'); */
+/* @import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css";
+ */
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+* {
+  box-sizing: border-box;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+@layer theme, base, components, utilities;
+
+@theme {
+  --breakpoint-*: initial;
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 976px;
+
+
+  /* general bg */
+  --color-back-500: #f5f5fd;
+
+  /* Primary */
+  --color-primary-50: oklch(95.633% 0.0374 211.09);
+  --color-primary-100: oklch(92.862% 0.06066 211.75);
+  --color-primary-200: oklch(88.125% 0.10157 212.12);
+  --color-primary-300: oklch(84.303% 0.13034 213.87);
+  --color-primary-400: oklch(81.203% 0.14419 217.95);
+  --color-primary-500: oklch(71.14% 0.12863 218.98);
+  --color-primary-600: oklch(60.947% 0.10984 218.48);
+  --color-primary-700: oklch(50.307% 0.09023 217.7);
+  --color-primary-800: oklch(39.115% 0.07012 217.62);
+  --color-primary-900: oklch(26.988% 0.04777 215.37);
+  --color-primary-950: oklch(20.373% 0.03539 211.21);
+
+  /* Secondary */
+  --color-secondary-50: oklch(85.015% 0.20476 144.17);
+  --color-secondary-100: oklch(83.477% 0.23083 143.71);
+  --color-secondary-200: oklch(80.681% 0.26313 142.91);
+  --color-secondary-300: oklch(68.552% 0.22519 142.84);
+  --color-secondary-400: oklch(54.5% 0.17743 142.93);
+  --color-secondary-500: oklch(39.178% 0.12437 143.08);
+  --color-secondary-600: oklch(27.06% 0.08152 143.6);
+  --color-secondary-700: oklch(13.221% 0.0341 146.69);
+  --color-secondary-800: oklch(0% 0 none);
+  --color-secondary-900: oklch(0% 0 none);
+  --color-secondary-950: oklch(0% 0 none);
+
+  /* Accent */
+  --color-accent-50: oklch(100% 0 none);
+  --color-accent-100: oklch(97.532% 0.01753 81.333);
+  --color-accent-200: oklch(91.489% 0.06067 79.102);
+  --color-accent-300: oklch(85.698% 0.10158 77.811);
+  --color-accent-400: oklch(80.247% 0.13594 75.301);
+  --color-accent-500: oklch(75.229% 0.15747 69.887);
+  --color-accent-600: oklch(67.272% 0.14324 68.844);
+  --color-accent-700: oklch(58.01% 0.1224 69.454);
+  --color-accent-800: oklch(48.364% 0.10057 70.359);
+  --color-accent-900: oklch(38.349% 0.0782 71.007);
+  --color-accent-950: oklch(33.029% 0.06577 71.902);
+
+  /* text */
+  --color-text-50: oklch(75.633% 0.02163 276.85);
+  --color-text-100: oklch(70.591% 0.02635 278.18);
+  --color-text-200: oklch(60.831% 0.0366 277.8);
+  --color-text-300: oklch(51.187% 0.03671 277.28);
+  --color-text-400: oklch(41.999% 0.02686 276.83);
+  --color-text-500: oklch(31.972% 0.01975 277.11);
+  --color-text-600: oklch(24.13% 0.0134 278.93);
+  --color-text-700: oklch(15.882% 0.00454 264.44);
+  --color-text-800: oklch(0% 0 none);
+  --color-text-900: oklch(0% 0 none);
+  --color-text-950: oklch(0% 0 none);
+
+  --font-sans: 'Inter', sans-serif;
+
+
+
+  /* --color-primary: #0E8813;
+  --color-secondary: #00B4D8;
+  --color-titles: #004E5E;
+  --color-active: #007086;
+  --color-default-text: #494C5C; */
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+@layer components {
+  body {
+    background: #f5f5fd !important;
+    overflow-x: hidden !important;
   }
-  a:hover {
-    color: #747bff;
+
+  .nav-x:hover {
+    color: var(--color-accent-500);
   }
-  button {
-    background-color: #f9f9f9;
+
+
+  /* Make the table scrollable horizontally on small screens */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.font-bold{
+  font-weight: 700;
+}
+/* Ensure that the table fits within the screen on small devices */
+@media (max-width: 768px) {
+  .mantine-Table {
+    width: 100%;
+    font-size: 12px;
   }
+
+  .mantine-Table td, .mantine-Table th {
+    padding: 8px;
+  }
+
+  .mantine-Table .mantine-TableTh, .mantine-Table .mantine-TableTd {
+    word-wrap: break-word;
+    white-space: normal;
+  }
+}
+
+
+
 }

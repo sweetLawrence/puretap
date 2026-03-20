@@ -36,6 +36,15 @@ router.post('/login', async (req, res) => {
   }
 })
 
+router.post('/customer-login', async (req, res) => {
+  try {
+    const result = await authService.customerLogin(req.body)
+    sendSuccess(res, result, 200, 'Login successful')
+  } catch (err) {
+    sendError(res, err.message, 401)
+  }
+})
+
 router.post('/refresh', async (req, res) => {
   try {
     const { refreshToken } = req.body

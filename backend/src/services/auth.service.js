@@ -60,6 +60,28 @@ export const login = async ({ email, password }) => {
   return { accessToken, refreshToken, user: safeUser }
 }
 
+
+export const customerLogin = async ({ account_no, phone }) => {
+  const { data: customer, error } = await supabase
+    .from('customers')
+    .select('*')
+    .eq('account_no', account_no)
+    .eq('phone', phone)
+    .eq('is_active', true)
+    .single()
+
+  if (error || !customer) throw new Error('Invalid account number or phone number')
+
+  const accessToken = jwt.sign(
+    { customerId: customer.id, role: 'customer', account_no: customer.account_no },
+    process.env.JWT_SECRET,
+    { expiresIn: '7d' }
+  )
+
+  const { password_hash, ...safeCustomer } = customer
+  return { accessToken, customer: safeCustomer }
+}
+
 export const refresh = async (refreshToken) => {
   let decoded
   try {
