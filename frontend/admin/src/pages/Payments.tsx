@@ -904,10 +904,10 @@ export default function Payments() {
 //           ? String(paymentPhone.replace('+', ''))
 //           : String(paymentPhone)
 const handleMpesa = async () => {
-     console.log('selectedInvoice:', selectedInvoice)
-  console.log('paymentPhone:', paymentPhone)
-  console.log('phone type:', typeof paymentPhone)
-  console.log('phone value:', String(paymentPhone).trim())
+//      console.log('selectedInvoice:', selectedInvoice)
+//   console.log('paymentPhone:', paymentPhone)
+//   console.log('phone type:', typeof paymentPhone)
+//   console.log('phone value:', String(paymentPhone).trim())
   if (!selectedInvoice || !paymentPhone) {
     setMpesaError('Please select an invoice and confirm the phone number')
     return

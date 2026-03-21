@@ -971,7 +971,8 @@ export default function SubmitReading() {
         {step === 0 && (
           <div className="flex flex-col gap-4">
             <div className="bg-white rounded-2xl overflow-hidden shadow-sm">
-              <div className="bg-primary-500 px-4 py-3">
+              <div className="bg-primar-500 px-4 py-3">
+                {/* colour camera */}
                 <Text size="sm" fw={600} className="text-white">Point camera at meter QR code</Text>
               </div>
               <div className="bg-black aspect-square relative">
@@ -1237,6 +1238,12 @@ export default function SubmitReading() {
           </div>
         )}
       </div>
-    </div>
+    </div>  
   )
 }
+
+
+
+
+
+

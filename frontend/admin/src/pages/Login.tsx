@@ -36,10 +36,10 @@ export default function Login () {
       const res = await api.post('/auth/login', { email, password })
 
       // ✅ Clean console logging
-      console.log('FULL RESPONSE:', res)
-      console.log('RESPONSE DATA:', res.data)
-      console.log('USER:', res.data.data.user)
-      console.log('TOKEN:', res.data.data.accessToken)
+      // console.log('FULL RESPONSE:', res)
+      // console.log('RESPONSE DATA:', res.data)
+      // console.log('USER:', res.data.data.user)
+      // console.log('TOKEN:', res.data.data.accessToken)
 
       const { accessToken, user } = res.data.data
 
