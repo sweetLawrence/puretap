@@ -16,6 +16,12 @@ const router = express.Router()
 // })
 
 
+router.use((req, res, next) => {
+  console.log('AUTH ROUTE HIT:', req.method, req.path)
+  next()
+})
+
+
 // register — admin only, not public
 router.post('/register', verifyToken, requireRole('admin'), async (req, res) => {
   try {
@@ -37,6 +43,7 @@ router.post('/login', async (req, res) => {
 })
 
 router.post('/customer-login', async (req, res) => {
+   console.log('CUSTOMER LOGIN BODY:', req.body)
   try {
     const result = await authService.customerLogin(req.body)
     sendSuccess(res, result, 200, 'Login successful')
