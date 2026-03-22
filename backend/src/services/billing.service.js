@@ -1,4 +1,5 @@
 import supabase from '../config/supabase.js'
+import { INVOICE_NO_CONFIG } from '../utils/constants.js'
 
 const calculateAmount = (units_consumed, customer_type, tariffs) => {
   const slabs = tariffs
@@ -26,14 +27,38 @@ const calculateAmount = (units_consumed, customer_type, tariffs) => {
   return parseFloat(amount_due.toFixed(2))
 }
 
+// const generateInvoiceNo = async () => {
+//   const year = new Date().getFullYear()
+//   const { count } = await supabase
+//     .from('invoices')
+//     .select('*', { count: 'exact', head: true })
+
+//   const next = String((count || 0) + 1).padStart(5, '0')
+//   return `INV-${year}-${next}`
+// }
+
+
+
+
 const generateInvoiceNo = async () => {
+  const { prefix, include_year, digits, separator } = INVOICE_NO_CONFIG
+
   const year = new Date().getFullYear()
+
+  // count invoices to get next number
   const { count } = await supabase
     .from('invoices')
     .select('*', { count: 'exact', head: true })
 
-  const next = String((count || 0) + 1).padStart(5, '0')
-  return `INV-${year}-${next}`
+  const next = String((count || 0) + 1).padStart(digits, '0')
+
+  if (include_year) {
+    return `${prefix}${separator}${year}${separator}${next}`
+    // e.g. INV-2026-00001
+  }
+
+  return `${prefix}${separator}${next}`
+  // e.g. INV-00001
 }
 
 export const generateInvoice = async (reading_id) => {
