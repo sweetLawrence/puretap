@@ -1,7 +1,5 @@
 
 
-
-
 import { useEffect, useState } from 'react'
 import { Paper, Title, Text, Button, Badge, Alert, Skeleton, Tabs, Table, Group } from '@mantine/core'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts'
