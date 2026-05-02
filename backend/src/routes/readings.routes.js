@@ -9,7 +9,7 @@ const router = express.Router()
 router.use(verifyToken)
 
 // get all readings — admin only
-router.get('/', requireRole('admin'), async (req, res) => {
+router.get('/', requireRole('admin','field_staff'), async (req, res) => {
   try {
     const readings = await readingsService.getAll()
     sendSuccess(res, readings)

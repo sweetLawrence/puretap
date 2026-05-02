@@ -60,8 +60,6 @@ export const login = async ({ email, password }) => {
   return { accessToken, refreshToken, user: safeUser }
 }
 
-
-
 export const customerLogin = async ({ account_no, phone }) => {
   // strip + and spaces to match how it may be stored
   const normalizedPhone = phone.replace(/\D/g, '')
@@ -73,7 +71,8 @@ export const customerLogin = async ({ account_no, phone }) => {
     .eq('is_active', true)
     .single()
 
-  if (error || !customer) throw new Error('Invalid account number or phone number')
+  if (error || !customer)
+    throw new Error('Invalid account number or phone number')
 
   // compare phone digits only — handles +254..., 254..., 0...
   const storedPhone = String(customer.phone).replace(/\D/g, '')
@@ -84,7 +83,11 @@ export const customerLogin = async ({ account_no, phone }) => {
   }
 
   const accessToken = jwt.sign(
-    { customerId: customer.id, role: 'customer', account_no: customer.account_no },
+    {
+      customerId: customer.id,
+      role: 'customer',
+      account_no: customer.account_no
+    },
     process.env.JWT_SECRET,
     { expiresIn: '7d' }
   )
@@ -92,12 +95,7 @@ export const customerLogin = async ({ account_no, phone }) => {
   return { accessToken, customer }
 }
 
-
-
-
-
-
-export const refresh = async (refreshToken) => {
+export const refresh = async refreshToken => {
   let decoded
   try {
     decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET)
@@ -125,7 +123,7 @@ export const refresh = async (refreshToken) => {
   return { accessToken }
 }
 
-export const logout = async (userId) => {
+export const logout = async userId => {
   await supabase
     .from('users')
     .update({ refresh_token_hash: null })

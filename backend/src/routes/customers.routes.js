@@ -10,7 +10,7 @@ const router = express.Router()
 router.use(verifyToken)
 
 // get all customers — admin only
-router.get('/', requireRole('admin'), async (req, res) => {
+router.get('/', requireRole('admin','field_staff'), async (req, res) => {
   try {
     const customers = await customersService.getAll()
     sendSuccess(res, customers)

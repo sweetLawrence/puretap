@@ -29,29 +29,3 @@ export default app
 // ```
 
 // ---
-
-// ### Test in Postman
-
-// **Register**
-// ```
-// POST http://localhost:5000/api/v1/auth/register
-// Content-Type: application/json
-
-// {
-//   "full_name": "James Otieno",
-//   "phone": "+254701234561",
-//   "email": "james.otieno@puretap.co.ke",
-//   "password": "Admin@1234",
-//   "role": "admin"
-// }
-// ```
-
-// **Login**
-// ```
-// POST http://localhost:5000/api/v1/auth/login
-// Content-Type: application/json
-
-// {
-//   "email": "james.otieno@puretap.co.ke",
-//   "password": "Admin@1234"
-// }

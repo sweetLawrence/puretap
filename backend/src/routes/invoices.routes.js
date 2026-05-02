@@ -10,7 +10,7 @@ const router = express.Router()
 router.use(verifyToken)
 
 // get all invoices
-router.get('/', requireRole('admin'), async (req, res) => {
+router.get('/', requireRole('admin','field_staff'), async (req, res) => {
   try {
     const invoices = await billingService.getAll()
     sendSuccess(res, invoices)
