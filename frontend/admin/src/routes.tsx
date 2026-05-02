@@ -18,6 +18,7 @@ import Notifications from './pages/Notifications'
 import AuditLogs from './pages/AuditLogs'
 import SubmitReading from './pages/SubmitReading'
 import MyReadings from './pages/Myreadings'
+import CustomerStatus from './pages/CustomerStatus'
 
 const router = createBrowserRouter([
   {
@@ -29,7 +30,6 @@ const router = createBrowserRouter([
         element: <Login />
       },
 
-    
       {
         path: '/',
         element: (
@@ -41,7 +41,7 @@ const router = createBrowserRouter([
           {
             path: 'dashboard',
             element: (
-              <AuthGuard allowedRoles={['admin','field_staff']}>
+              <AuthGuard allowedRoles={['admin', 'field_staff']}>
                 <Dashboard />
               </AuthGuard>
             )
@@ -65,7 +65,7 @@ const router = createBrowserRouter([
           {
             path: 'readings',
             element: (
-              <AuthGuard allowedRoles={['admin']}>
+              <AuthGuard allowedRoles={['admin', 'field_staff']}>
                 <Readings />
               </AuthGuard>
             )
@@ -129,27 +129,35 @@ const router = createBrowserRouter([
           {
             path: 'submit-reading',
             element: (
-              <AuthGuard allowedRoles={['admin','field_staff']}>
+              <AuthGuard allowedRoles={['admin', 'field_staff']}>
                 <SubmitReading />
               </AuthGuard>
             )
           },
           {
             path: 'my-readings',
-           element: (
-              <AuthGuard allowedRoles={['admin','field_staff']}>
+            element: (
+              <AuthGuard allowedRoles={['admin', 'field_staff']}>
                 <MyReadings />
               </AuthGuard>
             )
           },
-            {
-        path: '/unauthorized',
-        element: (
-          <div className='min-h-screen bg-back-500 flex items-center justify-center'>
-            <p className='text-text-500 text-lg'>Access denied.</p>
-          </div>
-        )
-      },
+          {
+            path: 'customer-status',
+            element: (
+              <AuthGuard allowedRoles={['admin', 'field_staff']}>
+                <CustomerStatus />
+              </AuthGuard>
+            )
+          },
+          {
+            path: '/unauthorized',
+            element: (
+              <div className='min-h-screen bg-back-500 flex items-center justify-center'>
+                <p className='text-text-500 text-lg'>Access denied.</p>
+              </div>
+            )
+          }
         ]
       }
     ]
