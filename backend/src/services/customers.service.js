@@ -130,6 +130,19 @@ export const deactivate = async (id) => {
   return data
 }
 
+
+// 11th May  2026 - added activate function to reactivate customers if needed
+export const activate = async (id) => {
+  const { data, error } = await supabase
+    .from('customers')
+    .update({ is_active: true, updated_at: new Date() })
+    .eq('id', id)
+    .select()
+    .single()
+  if (error) throw new Error(error.message)
+  return data
+}
+
 // export const search = async (query) => {
 //   const { data, error } = await supabase
 //     .from('customers')

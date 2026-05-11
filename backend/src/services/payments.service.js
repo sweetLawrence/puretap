@@ -296,3 +296,77 @@ export const getByCustomerId = async (customer_id) => {
   if (error) throw new Error(error.message)
   return data
 }
+
+
+
+
+
+
+
+// 11th May 2026: Added getByInvoiceId for easier reconciliation
+
+export const settleInvoice = async (invoice_id, amount_paid, customer_id, mpesa_ref = null) => {
+  const { data: invoice } = await supabase
+    .from('invoices')
+    .select('*')
+    .eq('id', invoice_id)
+    .single()
+
+  if (!invoice) throw new Error('Invoice not found')
+
+  const invoiceTotal = Number(invoice.total_amount)
+  const paid = Number(amount_paid)
+  const diff = parseFloat((paid - invoiceTotal).toFixed(2))
+
+  // mark invoice paid
+  await supabase.from('invoices')
+    .update({ status: 'paid' })
+    .eq('id', invoice_id)
+
+  // fetch current credit
+  const { data: customer } = await supabase
+    .from('customers')
+    .select('credit_balance')
+    .eq('id', customer_id)
+    .single()
+
+  const currentCredit = Number(customer?.credit_balance || 0)
+
+  if (diff > 0) {
+    // OVERPAYMENT — add credit
+    const newCredit = parseFloat((currentCredit + diff).toFixed(2))
+    await supabase.from('customers')
+      .update({ credit_balance: newCredit })
+      .eq('id', customer_id)
+
+    await supabase.from('credit_transactions').insert({
+      customer_id,
+      amount: diff,
+      type: 'credit_added',
+      reference: invoice.invoice_no,
+      description: `Overpayment of KES ${diff} on ${invoice.invoice_no} — carried forward`
+    })
+
+    console.log(`Overpayment: KES ${diff} added to credit for customer ${customer_id}`)
+
+  } else if (diff < 0) {
+    // UNDERPAYMENT — carry shortfall as outstanding on invoice
+    const shortfall = Math.abs(diff)
+    await supabase.from('invoices')
+      .update({
+        status: 'unpaid',   // keep unpaid since not fully settled
+        shortfall: shortfall
+      })
+      .eq('id', invoice_id)
+
+    await supabase.from('credit_transactions').insert({
+      customer_id,
+      amount: shortfall,
+      type: 'shortfall_carried',
+      reference: invoice.invoice_no,
+      description: `Underpayment of KES ${shortfall} on ${invoice.invoice_no} — balance remaining`
+    })
+
+    console.log(`Underpayment: KES ${shortfall} shortfall on invoice ${invoice.invoice_no}`)
+  }
+}

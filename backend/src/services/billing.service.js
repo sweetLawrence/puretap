@@ -61,6 +61,86 @@ const generateInvoiceNo = async () => {
   // e.g. INV-00001
 }
 
+// export const generateInvoice = async (reading_id) => {
+//   // get reading with meter and customer
+//   const { data: reading, error: readingError } = await supabase
+//     .from('readings')
+//     .select(`
+//       *,
+//       meters (
+//         id,
+//         serial_no,
+//         customers (id, customer_type)
+//       )
+//     `)
+//     .eq('id', reading_id)
+//     .single()
+
+//   if (readingError || !reading) throw new Error('Reading not found')
+
+//   // block invoice generation for flagged readings
+//   if (['flagged_ocr_mismatch', 'flagged_both', 'pending_review'].includes(reading.status)) {
+//     throw new Error('Cannot generate invoice for a flagged reading — resolve it first')
+//   }
+
+//   // check invoice does not already exist for this reading
+//   const { data: existingInvoice } = await supabase
+//     .from('invoices')
+//     .select('id')
+//     .eq('reading_id', reading_id)
+//     .single()
+
+//   if (existingInvoice) throw new Error('Invoice already exists for this reading')
+
+//   const customer_id = reading.meters.customers.id
+//   const customer_type = reading.meters.customers.customer_type
+//   const units_consumed = parseFloat(reading.units_consumed)
+
+//   // get active tariffs
+//   const { data: tariffs, error: tariffError } = await supabase
+//     .from('tariffs')
+//     .select('*')
+//     .eq('is_active', true)
+
+//   if (tariffError || !tariffs.length) throw new Error('No active tariffs found')
+
+//   const amount_due = calculateAmount(units_consumed, customer_type, tariffs)
+//   const tax_amount = 0
+//   const total_amount = parseFloat((amount_due + tax_amount).toFixed(2))
+
+//   const invoice_no = await generateInvoiceNo()
+
+//   const billing_period_start = reading.reading_date
+//   const due_date = new Date(reading.reading_date)
+//   due_date.setDate(due_date.getDate() + 30)
+
+//   const { data: invoice, error: invoiceError } = await supabase
+//     .from('invoices')
+//     .insert({
+//       invoice_no,
+//       customer_id,
+//       reading_id,
+//       units_consumed,
+//       amount_due,
+//       tax_amount,
+//       total_amount,
+//       status: 'unpaid',
+//       due_date: due_date.toISOString().split('T')[0],
+//       billing_period_start,
+//       billing_period_end: due_date.toISOString().split('T')[0],
+//       created_at: new Date(),
+//       updated_at: new Date()
+//     })
+//     .select()
+//     .single()
+
+//   if (invoiceError) throw new Error(invoiceError.message)
+//   return invoice
+// }
+
+
+
+// 11th May 2026: Added credit carry-forward logic to invoice generation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5 
 export const generateInvoice = async (reading_id) => {
   // get reading with meter and customer
   const { data: reading, error: readingError } = await supabase
@@ -83,7 +163,7 @@ export const generateInvoice = async (reading_id) => {
     throw new Error('Cannot generate invoice for a flagged reading — resolve it first')
   }
 
-  // check invoice does not already exist for this reading
+  // check duplicate invoice
   const { data: existingInvoice } = await supabase
     .from('invoices')
     .select('id')
@@ -96,7 +176,7 @@ export const generateInvoice = async (reading_id) => {
   const customer_type = reading.meters.customers.customer_type
   const units_consumed = parseFloat(reading.units_consumed)
 
-  // get active tariffs
+  // tariffs
   const { data: tariffs, error: tariffError } = await supabase
     .from('tariffs')
     .select('*')
@@ -106,7 +186,7 @@ export const generateInvoice = async (reading_id) => {
 
   const amount_due = calculateAmount(units_consumed, customer_type, tariffs)
   const tax_amount = 0
-  const total_amount = parseFloat((amount_due + tax_amount).toFixed(2))
+  const raw_total = parseFloat((amount_due + tax_amount).toFixed(2))
 
   const invoice_no = await generateInvoiceNo()
 
@@ -114,6 +194,24 @@ export const generateInvoice = async (reading_id) => {
   const due_date = new Date(reading.reading_date)
   due_date.setDate(due_date.getDate() + 30)
 
+  // =====================================================
+  // 🔥 CREDIT CARRY-FORWARD LOGIC (INSERTED HERE)
+  // =====================================================
+
+  const { data: customer } = await supabase
+    .from('customers')
+    .select('credit_balance')
+    .eq('id', customer_id)
+    .single()
+
+  const creditBalance = Number(customer?.credit_balance || 0)
+
+  const appliedCredit = Math.min(creditBalance, raw_total)
+  const final_total = Number((raw_total - appliedCredit).toFixed(2))
+
+  // =====================================================
+
+  // insert invoice
   const { data: invoice, error: invoiceError } = await supabase
     .from('invoices')
     .insert({
@@ -121,10 +219,11 @@ export const generateInvoice = async (reading_id) => {
       customer_id,
       reading_id,
       units_consumed,
-      amount_due,
+      amount_due: raw_total,
       tax_amount,
-      total_amount,
-      status: 'unpaid',
+      total_amount: final_total,
+      status: final_total === 0 ? 'paid' : 'unpaid',
+      credit_applied: appliedCredit,
       due_date: due_date.toISOString().split('T')[0],
       billing_period_start,
       billing_period_end: due_date.toISOString().split('T')[0],
@@ -135,8 +234,32 @@ export const generateInvoice = async (reading_id) => {
     .single()
 
   if (invoiceError) throw new Error(invoiceError.message)
+
+  // update customer credit balance
+  if (appliedCredit > 0) {
+    await supabase
+      .from('customers')
+      .update({
+        credit_balance: Number((creditBalance - appliedCredit).toFixed(2))
+      })
+      .eq('id', customer_id)
+
+    await supabase
+      .from('credit_transactions')
+      .insert({
+        customer_id,
+        amount: appliedCredit,
+        type: 'credit_applied',
+        reference: invoice.invoice_no,
+        description: `Credit applied to invoice ${invoice.invoice_no}`
+      })
+  }
+
   return invoice
 }
+
+
+
 
 export const getAll = async () => {
   const { data, error } = await supabase
@@ -206,3 +329,17 @@ export const updateStatus = async (id, status) => {
   if (error) throw new Error(error.message)
   return data
 }
+
+
+// supabase db dump --db-url "postgresql://postgres:$da_/ovelace@db.dzzatscbxwcwrexyejeh.supabase.co:5432/postgres" --schema-only -f schema.sql
+
+
+
+
+//  psql 
+// "[NEW_PROJECT_CONNECTION_STRING]"
+//  -f schema.sql
+
+
+
+//  postgresql://postgres:$da_/ovelace@db.dzzatscbxwcwrexyejeh.supabase.co:5432/postgres

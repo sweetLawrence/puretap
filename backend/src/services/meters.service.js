@@ -164,3 +164,15 @@ export const getBySerialNo = async serial_no => {
   if (error) throw new Error('Meter not found')
   return data
 }
+
+// 11th May 2026 - added activate function to reactivate meters if needed
+export const activate = async (id) => {
+  const { data, error } = await supabase
+    .from('meters')
+    .update({ is_active: true, updated_at: new Date() })
+    .eq('id', id)
+    .select()
+    .single()
+  if (error) throw new Error(error.message)
+  return data
+}

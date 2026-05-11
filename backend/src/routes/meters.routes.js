@@ -109,6 +109,17 @@ router.patch('/:id', requireRole('admin'), async (req, res) => {
   }
 })
 
+
+// activate meter — admin only 11th May 2026: Added activate route to reactivate meters if needed
+router.patch('/:id/activate', verifyToken, requireRole('admin'), async (req, res) => {
+  try {
+    const data = await metersService.activate(req.params.id)
+    sendSuccess(res, data, 200, 'Meter activated')
+  } catch (err) {
+    sendError(res, err.message, 400)
+  }
+})
+
 // deactivate meter — admin only
 router.patch('/:id/deactivate', requireRole('admin'), async (req, res) => {
   try {

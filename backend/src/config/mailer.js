@@ -6,6 +6,7 @@ const transporter = nodemailer.createTransport({
   host: process.env.MAIL_HOST,
   port: process.env.MAIL_PORT,
   secure: false,
+  family: 4, // FORCE IPv4
   auth: {
     user: process.env.MAIL_USER,
     pass: process.env.MAIL_PASS

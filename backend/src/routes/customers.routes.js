@@ -61,6 +61,16 @@ router.patch('/:id', requireRole('admin'), async (req, res) => {
   }
 })
 
+// 11th May 2026: Added activate/deactivate routes
+router.patch('/:id/activate', verifyToken, requireRole('admin'), async (req, res) => {
+  try {
+    const data = await customersService.activate(req.params.id)
+    sendSuccess(res, data, 200, 'Customer activated')
+  } catch (err) {
+    sendError(res, err.message, 400)
+  }
+})
+
 // deactivate customer — admin only
 router.patch('/:id/deactivate', requireRole('admin'), async (req, res) => {
   try {
