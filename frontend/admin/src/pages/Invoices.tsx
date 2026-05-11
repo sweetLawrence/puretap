@@ -699,12 +699,30 @@ export default function Invoices() {
   //   catch { alert('Failed to update status') }
   // }
 
+  // const handleNotify = async (id: number) => {
+  //   setNotifyLoading(id)
+  //   try { await api.post(`/notifications/invoice/${id}`); alert('Notification sent') }
+  //   catch { alert('Failed to send notification') }
+  //   finally { setNotifyLoading(null) }
+  // }
+
   const handleNotify = async (id: number) => {
-    setNotifyLoading(id)
-    try { await api.post(`/notifications/invoice/${id}`); alert('Notification sent') }
-    catch { alert('Failed to send notification') }
-    finally { setNotifyLoading(null) }
+  setNotifyLoading(id)
+
+  try {
+    const res = await api.post(`/notifications/invoice/${id}`)
+
+    if (res.status !== 200 && res.status !== 207) {
+      throw new Error('Notification failed')
+    }
+
+    alert(res.data?.message || 'Notification sent')
+  } catch (err: any) {
+    alert(err.response?.data?.message || 'Failed to send notification')
+  } finally {
+    setNotifyLoading(null)
   }
+}
 
   // const InvoicesTable = () => (
   //   <div className="table-responsive">
