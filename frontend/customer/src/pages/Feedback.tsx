@@ -83,12 +83,12 @@ const Feedback = () => {
     try {
       const response = await api.post('/feedback', values);
       if (response.data.success) {
-        alert('✅ Feedback submitted successfully!');
+        alert('Feedback submitted successfully!');
         form.reset();
         form.setValues({ type: 'complaint', subject: '', message: '', rating: 0 });
       }
     } catch (error: any) {
-      alert('❌ Error: ' + (error.response?.data?.message || 'Failed to submit feedback'));
+      alert(' Error: ' + (error.response?.data?.message || 'Failed to submit feedback'));
     } finally {
       setSubmitting(false);
     }
@@ -172,9 +172,9 @@ const Feedback = () => {
                   label="Feedback Type"
                   placeholder="Select type"
                   data={[
-                    { value: 'complaint', label: '⚠️ Complaint - Report an issue' },
-                    { value: 'suggestion', label: '💡 Suggestion - Share an idea' },
-                    { value: 'review', label: '⭐ Review - Rate our service' },
+                    { value: 'complaint', label: ' Complaint - Report an issue' },
+                    { value: 'suggestion', label: ' Suggestion - Share an idea' },
+                    { value: 'review', label: ' Review - Rate our service' },
                   ]}
                   {...form.getInputProps('type')}
                 />
