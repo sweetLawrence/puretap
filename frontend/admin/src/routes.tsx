@@ -19,6 +19,7 @@ import AuditLogs from './pages/AuditLogs'
 import SubmitReading from './pages/SubmitReading'
 import MyReadings from './pages/Myreadings'
 import CustomerStatus from './pages/CustomerStatus'
+import AdminFeedback from './pages/AdminFeedback'
 
 const router = createBrowserRouter([
   {
@@ -147,6 +148,14 @@ const router = createBrowserRouter([
             element: (
               <AuthGuard allowedRoles={['admin', 'field_staff']}>
                 <CustomerStatus />
+              </AuthGuard>
+            )
+          },
+           {
+            path: 'admin-feedback',
+            element: (
+              <AuthGuard allowedRoles={['admin', 'field_staff']}>
+                <AdminFeedback />
               </AuthGuard>
             )
           },

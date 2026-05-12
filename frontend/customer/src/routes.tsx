@@ -8,6 +8,7 @@ import Payments from './pages/Payments'
 import Consumption from './pages/Consumption'
 import AuthGuard from './components/AuthGuard'
 import AppLayout from './components/AppLayout'
+import Feedback from './pages/Feedback'
 
 const router = createBrowserRouter([
   { path: '/', element: <Navigate to="/login" replace /> },
@@ -22,6 +23,7 @@ const router = createBrowserRouter([
       { path: 'invoices', element: <Invoices /> },
       { path: 'payments', element: <Payments /> },
       { path: 'consumption', element: <Consumption /> },
+       { path: 'feedback', element: <Feedback /> },
     ]
   }
 ])

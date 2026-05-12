@@ -10,6 +10,7 @@ import paymentRoutes from './payments.routes.js'
 import notificationRoutes from './notifications.routes.js'
 import reportRoutes from './reports.routes.js'
 import auditlogRoutes from './auditlogs.routes.js'
+import feedbackRoutes from './feedback.routes.js'
 
 const router = express.Router()
 
@@ -24,6 +25,7 @@ router.use('/payments', paymentRoutes)
 router.use('/notifications', notificationRoutes)
 router.use('/reports', reportRoutes)
 router.use('/audit-logs', auditlogRoutes)
+router.use('/feedback', feedbackRoutes)
 
 export default router
 // ```
