@@ -1509,7 +1509,9 @@ export default function Customers() {
       >
         <Stack gap="md">
           {formError && (
-            <Alert color="red" radius="md" variant="light">{formError}</Alert>
+            <Alert color="red" radius="md" variant="light">
+              {formError}
+            </Alert>
           )}
 
           {editTarget && (
