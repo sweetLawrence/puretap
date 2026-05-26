@@ -517,7 +517,7 @@
 
 
 
-
+import React from 'react'
 import { useEffect, useState } from 'react'
 import {
   Paper, Title, Text, Select, Button, Badge, Modal,
@@ -610,6 +610,7 @@ export default function Invoices() {
   const [generating, setGenerating] = useState(false)
   const [generateError, setGenerateError] = useState('')
   const [generateSuccess, setGenerateSuccess] = useState(false)
+  const [downloading, setDownloading] = useState<number | null>(null)
 
   const load = async () => {
     try {
@@ -651,6 +652,34 @@ export default function Invoices() {
     }, 400)
     return () => clearTimeout(timeout)
   }, [customerSearch])
+
+const handleDownloadAll = async () => {
+  setDownloading(-1)  // use -1 as sentinel for "all"
+  try {
+    const res = await api.get('/invoices/download/all', {
+      responseType: 'blob'
+    })
+    const url = window.URL.createObjectURL(new Blob([res.data]))
+    const link = document.createElement('a')
+    link.href = url
+    const date = new Date().toISOString().split('T')[0]
+    link.setAttribute('download', `PureTap_Invoices_${date}.pdf`)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    window.URL.revokeObjectURL(url)
+  } catch {
+    alert('Failed to download invoices')
+  } finally {
+    setDownloading(null)
+  }
+}
+
+
+
+
+
+
 
   const selectCustomer = async (customer: Customer) => {
     setSelectedCustomer(customer)
@@ -968,6 +997,7 @@ export default function Invoices() {
     )
     return (
       <div className="table-responsive">
+  
         <Table striped highlightOnHover verticalSpacing="sm" horizontalSpacing="md">
           <Table.Thead>
             <Table.Tr className="bg-gray-50">
@@ -1025,6 +1055,7 @@ export default function Invoices() {
                             </svg>
                           </ActionIcon>
                         </Tooltip>
+                        
                         {inv.status === 'unpaid' && (
                           <Tooltip label="Mark overdue">
                             <ActionIcon variant="light" color="orange" radius="md" size="sm"
@@ -1060,7 +1091,7 @@ export default function Invoices() {
 
   return (
     <div className="p-4 md:p-6">
-      <div className="flex items-center justify-between mb-5">
+      {/* <div className="flex items-center justify-between mb-5">
         <div>
           <Title order={3} className="text-text-700 font-bold text-lg md:text-xl">Invoices</Title>
           <Text size="sm" className="text-text-300 mt-0.5 hidden sm:block">Manage billing invoices</Text>
@@ -1070,7 +1101,37 @@ export default function Invoices() {
           className="bg-primary-500 hover:bg-primary-600">
           + Generate Invoice
         </Button>
-      </div>
+      </div> */}
+
+
+
+      <div className="flex items-center justify-between mb-5">
+  <div>
+    <Title order={3} className="text-text-700 font-bold text-lg md:text-xl">Invoices</Title>
+    <Text size="sm" className="text-text-300 mt-0.5 hidden sm:block">Manage billing invoices</Text>
+  </div>
+  <Group gap="xs">
+    <Button radius="md" size="sm" variant="outline"
+      loading={downloading === -1}
+      onClick={handleDownloadAll}
+      className="border-primary-500 text-primary-600">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth="2" className="mr-1.5">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+        <polyline points="7 10 12 15 17 10" />
+        <line x1="12" y1="15" x2="12" y2="3" />
+      </svg>
+      {isMobile ? 'PDF' : 'Download All'}
+    </Button>
+    <Button radius="md" size="sm"
+      onClick={() => { setGenerateError(''); setGenerateModal(true) }}
+      className="bg-primary-500 hover:bg-primary-600">
+      + Generate Invoice
+    </Button>
+  </Group>
+</div>
+
+
 
       <Paper shadow="xs" radius="lg" p="sm" className="bg-white mb-4">
         <Stack gap="sm">
@@ -1219,6 +1280,8 @@ export default function Invoices() {
     </div>
   )
 }
+
+
 
 
 

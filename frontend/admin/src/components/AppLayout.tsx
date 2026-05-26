@@ -361,7 +361,9 @@ export default function AppLayout () {
       navbar={{ width: 240, breakpoint: 'md', collapsed: { mobile: !opened } }}
       padding='md'
     >
+
       {/* Header */}
+
       <AppShell.Header className='border-b border-gray-100 bg-white flex items-center px-4 gap-3'>
         <Burger
           opened={opened}

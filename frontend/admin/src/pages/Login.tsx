@@ -77,7 +77,7 @@ export default function Login () {
           </Title>
 
           <Text size='sm' className='text-text-300 mt-1'>
-            Water Billing Management System
+            Water Billing System
           </Text>
         </div>
 
