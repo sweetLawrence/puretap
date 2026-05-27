@@ -17,7 +17,15 @@ app.get('/', (req, res) => {
   
 
 app.use(helmet())
-app.use(cors())
+// app.use(cors())
+app.use(cors({
+  origin: [
+    "https://puretap.vercel.app",
+    "http://localhost:5173",
+    "http://localhost:5174"
+  ],
+  credentials: true
+}));
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(auditLog)
