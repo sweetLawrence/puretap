@@ -138,124 +138,492 @@ router.patch('/:id/status', requireRole('admin'), async (req, res) => {
 
 
 
+// router.get('/download/all', verifyToken, requireRole('admin'), async (req, res) => {
+//   console.log('Generating PDF report for all invoices...')
+//   try {
+//     // const { data: invoices, error } = await supabase
+//     //   .from('invoices')
+//     //   .select('*, customers(full_name, account_no, phone)')
+//     //   .order('created_at', { ascending: false })
+
+//     // replace with this
+// const { from, to, status } = req.query
+
+// let query = supabase
+//   .from('invoices')
+//   .select('*, customers(full_name, account_no, phone)')
+//   .order('created_at', { ascending: false })
+
+// if (status) query = query.eq('status', status)
+// if (from) query = query.gte('due_date', from)
+// if (to) query = query.lte('due_date', to)
+
+// const { data: invoices, error } = await query
+
+
+
+
+
+
+
+//     if (error) throw new Error(error.message)
+
+//     // const PDFDocument = (await import('pdfkit')).default
+//     const doc = new PDFDocument({ margin: 40, size: 'A4' })
+
+//     res.setHeader('Content-Type', 'application/pdf')
+//     res.setHeader('Content-Disposition', `attachment; filename=PureTap_Invoices_${new Date().toISOString().split('T')[0]}.pdf`)
+//     doc.pipe(res)
+
+//     const W = 515
+//     const blue = '#185FA5'
+//     const lightGray = '#F4F6FA'
+//     const darkText = '#1a1a2e'
+//     const mutedText = '#6B7280'
+
+//     // ── Cover header ──
+//     doc.rect(0, 0, 595, 80).fill(blue)
+//     doc.fillColor('white').fontSize(22).font('Helvetica-Bold')
+//       .text('PureTap Water Billing', 40, 20)
+//     doc.fontSize(10).font('Helvetica')
+//       // .text('All Invoices Report', 40, 48)
+//       // .text(`Generated: ${new Date().toLocaleDateString('en-KE', { dateStyle: 'full' })}`, 40, 62)
+//       // replace with this
+//   .text([
+//     status ? `Status: ${status}` : 'All statuses',
+//     from ? `From: ${from}` : null,
+//     to ? `To: ${to}` : null
+//   ].filter(Boolean).join('  ·  '), 40, 48)
+//   .text(`Generated: ${new Date().toLocaleDateString('en-KE', { dateStyle: 'full' })}`, 40, 62)
+
+
+
+
+
+
+
+//     // summary stats
+//     const total = invoices.length
+//     const paid = invoices.filter(i => i.status === 'paid').length
+//     const unpaid = invoices.filter(i => ['unpaid', 'overdue'].includes(i.status)).length
+//     const totalAmount = invoices.reduce((sum, i) => sum + Number(i.total_amount || 0), 0)
+//     const collected = invoices
+//       .filter(i => i.status === 'paid')
+//       .reduce((sum, i) => sum + Number(i.total_amount || 0), 0)
+
+//     doc.rect(0, 80, 595, 60).fill(lightGray)
+//     const stats = [
+//       ['Total Invoices', String(total)],
+//       ['Paid', String(paid)],
+//       ['Unpaid/Overdue', String(unpaid)],
+//       ['Total Billed', `KES ${totalAmount.toLocaleString()}`],
+//       ['Collected', `KES ${collected.toLocaleString()}`],
+//     ]
+//     stats.forEach(([label, value], i) => {
+//       const x = 40 + i * 103
+//       doc.fillColor(mutedText).fontSize(8).font('Helvetica').text(label, x, 88)
+//       doc.fillColor(darkText).fontSize(11).font('Helvetica-Bold').text(value, x, 102)
+//     })
+
+//     doc.moveDown(4)
+
+//     // ── Table header ──
+//     const tableTop = 155
+//     const cols = [40, 120, 240, 320, 390, 460]
+//     const headers = ['Invoice No', 'Customer', 'Amount', 'Due Date', 'Status', 'Units']
+
+//     doc.rect(40, tableTop, W, 22).fill(blue)
+//     doc.fillColor('white').fontSize(8).font('Helvetica-Bold')
+//     headers.forEach((h, i) => doc.text(h, cols[i], tableTop + 7))
+
+//     // ── Table rows ──
+//     let y = tableTop + 22
+//     const rowHeight = 20
+
+//     invoices.forEach((inv, idx) => {
+//       // page break
+//       if (y > 750) {
+//         doc.addPage()
+//         y = 40
+//         doc.rect(40, y, W, 22).fill(blue)
+//         doc.fillColor('white').fontSize(8).font('Helvetica-Bold')
+//         headers.forEach((h, i) => doc.text(h, cols[i], y + 7))
+//         y += 22
+//       }
+
+//       // alternating row bg
+//       doc.rect(40, y, W, rowHeight).fill(idx % 2 === 0 ? 'white' : lightGray)
+
+//       // status color
+//       const statusColors = {
+//         paid: '#0F6E56', unpaid: '#B45309',
+//         overdue: '#991B1B', cancelled: '#6B7280', disputed: '#7C3AED'
+//       }
+//       const statusColor = statusColors[inv.status] || '#6B7280'
+
+//       doc.fillColor(darkText).fontSize(8).font('Helvetica')
+//         .text(inv.invoice_no || '—', cols[0], y + 6, { width: 75 })
+//         .text(inv.customers?.full_name || '—', cols[1], y + 6, { width: 115, ellipsis: true })
+//         .text(`KES ${Number(inv.total_amount).toLocaleString()}`, cols[2], y + 6, { width: 75 })
+//         .text(inv.due_date || '—', cols[3], y + 6, { width: 65 })
+
+//       // status pill
+//       doc.roundedRect(cols[4], y + 4, 55, 13, 3).fill(statusColor)
+//       doc.fillColor('white').fontSize(7).font('Helvetica-Bold')
+//         .text(inv.status.toUpperCase(), cols[4] + 2, y + 7, { width: 51, align: 'center' })
+
+//       doc.fillColor(darkText).fontSize(8).font('Helvetica')
+//         .text(`${inv.units_consumed} m³`, cols[5], y + 6, { width: 50 })
+
+//       y += rowHeight
+//     })
+
+//     // ── Footer ──
+//     doc.rect(0, 800, 595, 42).fill(darkText)
+//     doc.fillColor('white').fontSize(8).font('Helvetica')
+//       .text('PureTap Water Billing System · Gitaru Town, Kenya', 0, 812, { align: 'center' })
+//       .text(`Report generated on ${new Date().toLocaleString()}`, 0, 824, { align: 'center' })
+
+//     doc.end()
+//   } catch (err) {
+//     sendError(res, err.message, 500)
+//   }
+// })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 router.get('/download/all', verifyToken, requireRole('admin'), async (req, res) => {
   console.log('Generating PDF report for all invoices...')
+
   try {
-    const { data: invoices, error } = await supabase
+    const { from, to, status } = req.query
+
+    let query = supabase
       .from('invoices')
       .select('*, customers(full_name, account_no, phone)')
       .order('created_at', { ascending: false })
 
+    if (status) query = query.eq('status', status)
+    if (from) query = query.gte('due_date', from)
+    if (to) query = query.lte('due_date', to)
+
+    const { data: invoices, error } = await query
+
     if (error) throw new Error(error.message)
 
-    const PDFDocument = (await import('pdfkit')).default
-    const doc = new PDFDocument({ margin: 40, size: 'A4' })
+    const doc = new PDFDocument({
+      margin: 40,
+      size: 'A4',
+      bufferPages: true
+    })
 
     res.setHeader('Content-Type', 'application/pdf')
-    res.setHeader('Content-Disposition', `attachment; filename=PureTap_Invoices_${new Date().toISOString().split('T')[0]}.pdf`)
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=PureTap_Invoices_${new Date().toISOString().split('T')[0]}.pdf`
+    )
+
     doc.pipe(res)
 
-    const W = 515
+    // ─────────────────────────────────────
+    // COLORS
+    // ─────────────────────────────────────
     const blue = '#185FA5'
-    const lightGray = '#F4F6FA'
-    const darkText = '#1a1a2e'
+    const darkBlue = '#11497F'
+    const softBlue = '#F5F9FF'
+    const rowAlt = '#FAFBFD'
+    const darkText = '#1A1A2E'
     const mutedText = '#6B7280'
+    const white = '#FFFFFF'
 
-    // ── Cover header ──
-    doc.rect(0, 0, 595, 80).fill(blue)
-    doc.fillColor('white').fontSize(22).font('Helvetica-Bold')
-      .text('PureTap Water Billing', 40, 20)
-    doc.fontSize(10).font('Helvetica')
-      .text('All Invoices Report', 40, 48)
-      .text(`Generated: ${new Date().toLocaleDateString('en-KE', { dateStyle: 'full' })}`, 40, 62)
+    const PAGE_WIDTH = 595
+    const CONTENT_WIDTH = 515
 
-    // summary stats
+    // ─────────────────────────────────────
+    // TOP HEADER
+    // ─────────────────────────────────────
+    doc.rect(0, 0, PAGE_WIDTH, 105).fill(blue)
+
+    // subtle top accent
+    doc.rect(0, 0, PAGE_WIDTH, 8).fill('#4EA5FF')
+
+    doc
+      .fillColor(white)
+      .font('Helvetica-Bold')
+      .fontSize(25)
+      .text('PureTap Water Billing', 40, 28)
+
+    doc
+      .fillColor('#D8E9FA')
+      .font('Helvetica')
+      .fontSize(11)
+      .text('Invoices Financial Summary Report', 40, 60)
+
+    const filterText = [
+      status ? `Status: ${status}` : 'All statuses',
+      from ? `From: ${from}` : null,
+      to ? `To: ${to}` : null
+    ]
+      .filter(Boolean)
+      .join('   •   ')
+
+    doc
+      .fillColor(white)
+      .fontSize(9)
+      .text(filterText, 40, 82)
+
+    doc
+      .fontSize(9)
+      .text(
+        new Date().toLocaleDateString('en-KE', {
+          dateStyle: 'full'
+        }),
+        380,
+        82,
+        {
+          width: 170,
+          align: 'right'
+        }
+      )
+
+    // decorative side block
+    doc.rect(520, 18, 8, 65).fill('#63B3FF')
+    doc.rect(535, 18, 8, 50).fill('#9FD0FF')
+
+    // ─────────────────────────────────────
+    // SUMMARY STRIP
+    // ─────────────────────────────────────
     const total = invoices.length
+
     const paid = invoices.filter(i => i.status === 'paid').length
-    const unpaid = invoices.filter(i => ['unpaid', 'overdue'].includes(i.status)).length
-    const totalAmount = invoices.reduce((sum, i) => sum + Number(i.total_amount || 0), 0)
+
+    const unpaid = invoices.filter(i =>
+      ['unpaid', 'overdue'].includes(i.status)
+    ).length
+
+    const totalAmount = invoices.reduce(
+      (sum, i) => sum + Number(i.total_amount || 0),
+      0
+    )
+
     const collected = invoices
       .filter(i => i.status === 'paid')
       .reduce((sum, i) => sum + Number(i.total_amount || 0), 0)
 
-    doc.rect(0, 80, 595, 60).fill(lightGray)
     const stats = [
-      ['Total Invoices', String(total)],
-      ['Paid', String(paid)],
-      ['Unpaid/Overdue', String(unpaid)],
-      ['Total Billed', `KES ${totalAmount.toLocaleString()}`],
-      ['Collected', `KES ${collected.toLocaleString()}`],
+      ['TOTAL', total],
+      ['PAID', paid],
+      ['UNPAID', unpaid],
+      ['BILLED', `KES ${totalAmount.toLocaleString()}`],
+      ['COLLECTED', `KES ${collected.toLocaleString()}`]
     ]
+
+    let statX = 40
+    const statY = 132
+
     stats.forEach(([label, value], i) => {
-      const x = 40 + i * 103
-      doc.fillColor(mutedText).fontSize(8).font('Helvetica').text(label, x, 88)
-      doc.fillColor(darkText).fontSize(11).font('Helvetica-Bold').text(value, x, 102)
+      if (i !== 0) {
+        doc.rect(statX - 12, statY + 2, 1, 34).fill('#D9E3EF')
+      }
+
+      doc
+        .fillColor(mutedText)
+        .font('Helvetica-Bold')
+        .fontSize(8)
+        .text(label, statX, statY)
+
+      doc
+        .fillColor(darkText)
+        .font('Helvetica-Bold')
+        .fontSize(13)
+        .text(String(value), statX, statY + 14)
+
+      statX += 103
     })
 
-    doc.moveDown(4)
+    // separator line
+    doc.rect(40, 182, CONTENT_WIDTH, 2).fill('#E5EDF7')
 
-    // ── Table header ──
-    const tableTop = 155
-    const cols = [40, 120, 240, 320, 390, 460]
-    const headers = ['Invoice No', 'Customer', 'Amount', 'Due Date', 'Status', 'Units']
+    // ─────────────────────────────────────
+    // TABLE HEADER
+    // ─────────────────────────────────────
+    const tableTop = 205
+    const rowHeight = 30
 
-    doc.rect(40, tableTop, W, 22).fill(blue)
-    doc.fillColor('white').fontSize(8).font('Helvetica-Bold')
-    headers.forEach((h, i) => doc.text(h, cols[i], tableTop + 7))
+    const cols = {
+      invoice: 48,
+      customer: 135,
+      amount: 285,
+      dueDate: 372,
+      status: 450,
+      units: 515
+    }
 
-    // ── Table rows ──
-    let y = tableTop + 22
-    const rowHeight = 20
+    // dark strip
+    doc.rect(40, tableTop, CONTENT_WIDTH, 24).fill(darkBlue)
+
+    doc
+      .fillColor(white)
+      .font('Helvetica-Bold')
+      .fontSize(8.5)
+
+    doc.text('Invoice No', cols.invoice, tableTop + 8)
+    doc.text('Customer', cols.customer, tableTop + 8)
+    doc.text('Amount', cols.amount, tableTop + 8)
+    doc.text('Due Date', cols.dueDate, tableTop + 8)
+    doc.text('Status', cols.status, tableTop + 8)
+    doc.text('Units', cols.units, tableTop + 8)
+
+    // ─────────────────────────────────────
+    // TABLE ROWS
+    // ─────────────────────────────────────
+    let y = tableTop + 24
 
     invoices.forEach((inv, idx) => {
-      // page break
-      if (y > 750) {
+      // PAGE BREAK
+      if (y > 742) {
         doc.addPage()
+
         y = 40
-        doc.rect(40, y, W, 22).fill(blue)
-        doc.fillColor('white').fontSize(8).font('Helvetica-Bold')
-        headers.forEach((h, i) => doc.text(h, cols[i], y + 7))
-        y += 22
+
+        doc.rect(40, y, CONTENT_WIDTH, 24).fill(darkBlue)
+
+        doc
+          .fillColor(white)
+          .font('Helvetica-Bold')
+          .fontSize(8.5)
+
+        doc.text('Invoice No', cols.invoice, y + 8)
+        doc.text('Customer', cols.customer, y + 8)
+        doc.text('Amount', cols.amount, y + 8)
+        doc.text('Due Date', cols.dueDate, y + 8)
+        doc.text('Status', cols.status, y + 8)
+        doc.text('Units', cols.units, y + 8)
+
+        y += 24
       }
 
-      // alternating row bg
-      doc.rect(40, y, W, rowHeight).fill(idx % 2 === 0 ? 'white' : lightGray)
+      // alternating soft backgrounds
+      doc
+        .rect(40, y, CONTENT_WIDTH, rowHeight)
+        .fill(idx % 2 === 0 ? white : rowAlt)
 
-      // status color
+      // subtle left accent line
+      doc
+        .rect(40, y, 4, rowHeight)
+        .fill(idx % 2 === 0 ? '#D9E9FA' : '#C7DDF5')
+
+      // invoice data
+      doc
+        .fillColor(darkText)
+        .font('Helvetica')
+        .fontSize(8.5)
+
+      doc.text(inv.invoice_no || '—', cols.invoice, y + 10, {
+        width: 75
+      })
+
+      doc.text(inv.customers?.full_name || '—', cols.customer, y + 10, {
+        width: 135,
+        ellipsis: true
+      })
+
+      doc
+        .font('Helvetica-Bold')
+        .text(
+          `KES ${Number(inv.total_amount || 0).toLocaleString()}`,
+          cols.amount,
+          y + 10
+        )
+
+      doc
+        .font('Helvetica')
+        .fillColor(mutedText)
+        .text(inv.due_date || '—', cols.dueDate, y + 10)
+
+      // status
       const statusColors = {
-        paid: '#0F6E56', unpaid: '#B45309',
-        overdue: '#991B1B', cancelled: '#6B7280', disputed: '#7C3AED'
+        paid: '#0F9D58',
+        unpaid: '#F59E0B',
+        overdue: '#DC2626',
+        cancelled: '#6B7280',
+        disputed: '#7C3AED'
       }
-      const statusColor = statusColors[inv.status] || '#6B7280'
 
-      doc.fillColor(darkText).fontSize(8).font('Helvetica')
-        .text(inv.invoice_no || '—', cols[0], y + 6, { width: 75 })
-        .text(inv.customers?.full_name || '—', cols[1], y + 6, { width: 115, ellipsis: true })
-        .text(`KES ${Number(inv.total_amount).toLocaleString()}`, cols[2], y + 6, { width: 75 })
-        .text(inv.due_date || '—', cols[3], y + 6, { width: 65 })
+      doc
+        .fillColor(statusColors[inv.status] || mutedText)
+        .font('Helvetica-Bold')
+        .text(
+          (inv.status || 'unknown').toUpperCase(),
+          cols.status,
+          y + 10
+        )
 
-      // status pill
-      doc.roundedRect(cols[4], y + 4, 55, 13, 3).fill(statusColor)
-      doc.fillColor('white').fontSize(7).font('Helvetica-Bold')
-        .text(inv.status.toUpperCase(), cols[4] + 2, y + 7, { width: 51, align: 'center' })
-
-      doc.fillColor(darkText).fontSize(8).font('Helvetica')
-        .text(`${inv.units_consumed} m³`, cols[5], y + 6, { width: 50 })
+      doc
+        .fillColor(darkText)
+        .font('Helvetica')
+        .text(`${inv.units_consumed || 0} m³`, cols.units, y + 10)
 
       y += rowHeight
     })
 
-    // ── Footer ──
-    doc.rect(0, 800, 595, 42).fill(darkText)
-    doc.fillColor('white').fontSize(8).font('Helvetica')
-      .text('PureTap Water Billing System · Gitaru Town, Kenya', 0, 812, { align: 'center' })
-      .text(`Report generated on ${new Date().toLocaleString()}`, 0, 824, { align: 'center' })
+    // ─────────────────────────────────────
+    // FOOTER
+    // ─────────────────────────────────────
+    const range = doc.bufferedPageRange()
+
+    for (let i = 0; i < range.count; i++) {
+      doc.switchToPage(i)
+
+      // top line above footer
+      doc.rect(40, 790, CONTENT_WIDTH, 1).fill('#DCE5EF')
+
+      doc
+        .fillColor(mutedText)
+        .font('Helvetica')
+        .fontSize(8)
+
+      doc.text(
+        'PureTap Water Billing System',
+        40,
+        802
+      )
+
+      doc.text(
+        `Generated ${new Date().toLocaleString()}`,
+        200,
+        802
+      )
+
+      doc.text(
+        `Page ${i + 1} of ${range.count}`,
+        470,
+        802
+      )
+    }
 
     doc.end()
   } catch (err) {
     sendError(res, err.message, 500)
   }
 })
+
+
+
+
+
 
 
 router.get('/:id/download', verifyToken, async (req, res) => {

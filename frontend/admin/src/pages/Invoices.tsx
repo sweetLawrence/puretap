@@ -612,6 +612,15 @@ export default function Invoices() {
   const [generateSuccess, setGenerateSuccess] = useState(false)
   const [downloading, setDownloading] = useState<number | null>(null)
 
+
+  // new code
+  const [downloadModal, setDownloadModal] = useState(false)
+const [downloadFrom, setDownloadFrom] = useState('')
+const [downloadTo, setDownloadTo] = useState('')
+const [downloadStatus, setDownloadStatus] = useState<string | null>(null)
+ // new code
+
+
   const load = async () => {
     try {
       const res = await api.get('/invoices')
@@ -653,10 +662,65 @@ export default function Invoices() {
     return () => clearTimeout(timeout)
   }, [customerSearch])
 
+// const handleDownloadAll = async () => {
+//   setDownloading(-1)  // use -1 as sentinel for "all"
+//   try {
+//     const res = await api.get('/invoices/download/all', {
+//       responseType: 'blob'
+//     })
+//     const url = window.URL.createObjectURL(new Blob([res.data]))
+//     const link = document.createElement('a')
+//     link.href = url
+//     const date = new Date().toISOString().split('T')[0]
+//     link.setAttribute('download', `PureTap_Invoices_${date}.pdf`)
+//     document.body.appendChild(link)
+//     link.click()
+//     link.remove()
+//     window.URL.revokeObjectURL(url)
+//   } catch {
+//     alert('Failed to download invoices')
+//   } finally {
+//     setDownloading(null)
+//   }
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const handleDownloadAll = async () => {
-  setDownloading(-1)  // use -1 as sentinel for "all"
+  setDownloading(-1)
   try {
-    const res = await api.get('/invoices/download/all', {
+    const params = new URLSearchParams()
+    if (downloadFrom) params.append('from', downloadFrom)
+    if (downloadTo) params.append('to', downloadTo)
+    if (downloadStatus) params.append('status', downloadStatus)
+
+    const res = await api.get(`/invoices/download/all?${params.toString()}`, {
       responseType: 'blob'
     })
     const url = window.URL.createObjectURL(new Blob([res.data]))
@@ -668,12 +732,27 @@ const handleDownloadAll = async () => {
     link.click()
     link.remove()
     window.URL.revokeObjectURL(url)
+    setDownloadModal(false)
   } catch {
     alert('Failed to download invoices')
   } finally {
     setDownloading(null)
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1111,7 +1190,7 @@ const handleDownloadAll = async () => {
     <Text size="sm" className="text-text-300 mt-0.5 hidden sm:block">Manage billing invoices</Text>
   </div>
   <Group gap="xs">
-    <Button radius="md" size="sm" variant="outline"
+    {/* <Button radius="md" size="sm" variant="outline"
       loading={downloading === -1}
       onClick={handleDownloadAll}
       className="border-primary-500 text-primary-600">
@@ -1122,7 +1201,25 @@ const handleDownloadAll = async () => {
         <line x1="12" y1="15" x2="12" y2="3" />
       </svg>
       {isMobile ? 'PDF' : 'Download All'}
-    </Button>
+    </Button> */}
+
+
+    <Button radius="md" size="sm" variant="outline"
+  onClick={() => setDownloadModal(true)}
+  className="border-primary-500 text-primary-600">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2" className="mr-1.5">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+    <polyline points="7 10 12 15 17 10" />
+    <line x1="12" y1="15" x2="12" y2="3" />
+  </svg>
+  {isMobile ? 'PDF' : 'Download PDF'}
+</Button>
+
+
+
+
+
     <Button radius="md" size="sm"
       onClick={() => { setGenerateError(''); setGenerateModal(true) }}
       className="bg-primary-500 hover:bg-primary-600">
@@ -1277,6 +1374,78 @@ const handleDownloadAll = async () => {
           </Stack>
         )}
       </Modal>
+
+      {/* Download Modal */}
+<Modal opened={downloadModal} onClose={() => setDownloadModal(false)}
+  title={<Text fw={600} className="text-text-600">Download Invoices PDF</Text>}
+  radius="lg" size="sm">
+  <Stack gap="md">
+    <Text size="sm" className="text-text-400">
+      Filter invoices before downloading. Leave fields empty to download all.
+    </Text>
+
+    <div>
+      <Text size="xs" fw={500} className="text-text-500 mb-1">Status</Text>
+      <Select
+        placeholder="All statuses"
+        value={downloadStatus}
+        onChange={setDownloadStatus}
+        clearable radius="md"
+        data={[
+          { value: 'unpaid', label: 'Unpaid' },
+          { value: 'paid', label: 'Paid' },
+          { value: 'overdue', label: 'Overdue' },
+          { value: 'disputed', label: 'Disputed' },
+          { value: 'cancelled', label: 'Cancelled' },
+        ]}
+      />
+    </div>
+
+    <div>
+      <Text size="xs" fw={500} className="text-text-500 mb-1">Due Date From</Text>
+      <input type="date" value={downloadFrom}
+        onChange={e => setDownloadFrom(e.target.value)}
+        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-text-600 focus:outline-none focus:ring-2 focus:ring-primary-300"
+      />
+    </div>
+
+    <div>
+      <Text size="xs" fw={500} className="text-text-500 mb-1">Due Date To</Text>
+      <input type="date" value={downloadTo}
+        onChange={e => setDownloadTo(e.target.value)}
+        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-text-600 focus:outline-none focus:ring-2 focus:ring-primary-300"
+      />
+    </div>
+
+    {/* preview of what will be included */}
+    <div className="bg-gray-50 rounded-xl p-3">
+      <Text size="xs" className="text-text-300">
+        Will include:{' '}
+        <span className="font-semibold text-text-500">
+          {downloadStatus ? downloadStatus : 'all statuses'}
+        </span>
+        {downloadFrom && ` · from ${downloadFrom}`}
+        {downloadTo && ` · to ${downloadTo}`}
+      </Text>
+    </div>
+
+    <Button fullWidth radius="md"
+      loading={downloading === -1}
+      onClick={handleDownloadAll}
+      className="bg-primary-500 hover:bg-primary-600">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+        stroke="white" strokeWidth="2" className="mr-2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+        <polyline points="7 10 12 15 17 10" />
+        <line x1="12" y1="15" x2="12" y2="3" />
+      </svg>
+      Download PDF
+    </Button>
+  </Stack>
+</Modal>
+
+
+
     </div>
   )
 }
