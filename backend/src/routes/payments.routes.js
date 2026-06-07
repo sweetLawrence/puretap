@@ -8,8 +8,11 @@ const router = express.Router()
 
 // mpesa callback is public — safaricom calls it directly, no auth
 router.post('/mpesa/callback', async (req, res) => {
+ console.log('🔔 MPESA CALLBACK RECEIVED at:', new Date().toISOString())
+  console.log('📦 Request body:', JSON.stringify(req.body, null, 2))
   try {
     const result = await paymentsService.mpesaCallback(req.body)
+    console.log('✅ Callback processed successfully:', result)
     console.log('MPESA CALLBACK:', JSON.stringify(req.body, null, 2))
     res.status(200).json({ ResultCode: 0, ResultDesc: 'Success' })
   } catch (err) {
@@ -20,7 +23,7 @@ router.post('/mpesa/callback', async (req, res) => {
 router.use(verifyToken)
 
 // get all payments
-router.get('/', requireRole('admin'), async (req, res) => {
+router.get('/', requireRole('admin','customer'), async (req, res) => {
   try {
     const payments = await paymentsService.getAll()
     sendSuccess(res, payments)
@@ -51,17 +54,27 @@ router.get('/:id', requireRole('admin'), async (req, res) => {
 })
 
 // initiate mpesa stk push
-// router.post('/mpesa/initiate', requireRole('admin', 'field_staff'), async (req, res) => {
-  router.post('/mpesa/initiate', verifyToken, requireRole('admin', 'field_staff', 'customer'), async (req, res) => {
+
+
+
+// Update the route to accept amount parameter
+router.post('/mpesa/initiate', verifyToken, requireRole('admin', 'field_staff', 'customer'), async (req, res) => {
   try {
-    const { invoice_id, phone } = req.body
+    const { invoice_id, phone, amount } = req.body  // Add amount to destructuring
     if (!invoice_id || !phone) return sendError(res, 'invoice_id and phone are required', 400)
-    const result = await paymentsService.initiateStkPush(invoice_id,String(phone).trim())
+    
+    // Pass the amount to the service (can be undefined for full payment)
+    const result = await paymentsService.initiateStkPush(invoice_id, String(phone).trim(), amount)
     sendSuccess(res, result, 200, 'STK push sent to customer phone')
   } catch (err) {
     sendError(res, err.message, 400)
   }
 })
+
+
+
+
+
 
 // record manual payment — cash or bank
 router.post('/manual', requireRole('admin'), async (req, res) => {
@@ -76,4 +89,56 @@ router.post('/manual', requireRole('admin'), async (req, res) => {
   }
 })
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Add these routes after your existing routes, before export default router
+
+// Get customer credit balance
+router.get('/credit/balance/:customerId', verifyToken, async (req, res) => {
+  try {
+    const balance = await paymentsService.getCustomerCreditBalance(req.params.customerId)
+    sendSuccess(res, { credit_balance: balance })
+  } catch (err) {
+    sendError(res, err.message, 400)
+  }
+})
+
+// Get customer credit transactions
+router.get('/credit/transactions/:customerId', verifyToken, async (req, res) => {
+  try {
+    const transactions = await paymentsService.getCreditTransactions(req.params.customerId)
+    sendSuccess(res, transactions)
+  } catch (err) {
+    sendError(res, err.message, 400)
+  }
+})
 export default router

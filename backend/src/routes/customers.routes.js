@@ -32,7 +32,7 @@ router.get('/search', requireRole('admin'), async (req, res) => {
 })
 
 // get single customer — admin or field_staff
-router.get('/:id', requireRole('admin', 'field_staff'), async (req, res) => {
+router.get('/:id', requireRole('admin', 'field_staff','customer'), async (req, res) => {
   try {
     const customer = await customersService.getById(req.params.id)
     sendSuccess(res, customer)
@@ -52,7 +52,7 @@ router.post('/', requireRole('admin'), async (req, res) => {
 })
 
 // update customer — admin only
-router.patch('/:id', requireRole('admin'), async (req, res) => {
+router.patch('/:id', requireRole('admin','field_staff'), async (req, res) => {
   try {
     const customer = await customersService.update(req.params.id, req.body)
     sendSuccess(res, customer, 200, 'Customer updated successfully')

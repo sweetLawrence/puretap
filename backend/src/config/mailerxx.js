@@ -6,7 +6,7 @@ const sendMail = async ({ to, subject, html, text }) => {
   try {
     const { data, error } = await resend.emails.send({
       // from: process.env.MAIL_FROM || 'PureTap Water <tsungulawrence@gmail.com>',
-      from: 'Acme <onboarding@resend.dev>',
+      from: 'Puretap <onboarding@resend.dev>',
       to,
       subject,
       html,

@@ -331,3 +331,100 @@ export const updateStatus = async (id, status) => {
 }
 
 
+// EXPERIMENTA
+
+// Add these functions to your existing billing.service.js file
+
+// Get customer invoices with remaining balance calculation
+export const getCustomerInvoicesWithBalance = async (customer_id) => {
+  const { data, error } = await supabase
+    .from('invoices')
+    .select(`
+      *,
+      customers (id, full_name, phone, account_no)
+    `)
+    .eq('customer_id', customer_id)
+    .order('created_at', { ascending: false })
+
+  if (error) throw new Error(error.message)
+  
+  // Calculate remaining balance for each invoice
+  const invoicesWithBalance = data.map(invoice => {
+    const total = Number(invoice.total_amount)
+    const paid = Number(invoice.amount_paid || 0)
+    const remaining = total - paid
+    
+    return {
+      ...invoice,
+      remaining_balance: remaining > 0 ? remaining : 0,
+      amount_paid: paid,
+      is_fully_paid: remaining <= 0
+    }
+  })
+  
+  return invoicesWithBalance
+}
+
+// Get single invoice with remaining balance
+export const getInvoiceWithBalance = async (id) => {
+  const { data: invoice, error } = await supabase
+    .from('invoices')
+    .select(`
+      *,
+      customers (id, full_name, phone, account_no)
+    `)
+    .eq('id', id)
+    .single()
+
+  if (error) throw new Error('Invoice not found')
+  
+  const paid = Number(invoice.amount_paid || 0)
+  const total = Number(invoice.total_amount)
+  const remaining = total - paid
+  
+  return {
+    ...invoice,
+    remaining_balance: remaining > 0 ? remaining : 0,
+    amount_paid: paid,
+    is_fully_paid: remaining <= 0
+  }
+}
+
+
+
+
+
+
+// Get invoice with calculated payment status
+export const getInvoiceWithPaymentStatus = async (invoice_id) => {
+  // Get invoice
+  const { data: invoice, error } = await supabase
+    .from('invoices')
+    .select('*, customers(*)')
+    .eq('id', invoice_id)
+    .single()
+
+  if (error) throw new Error('Invoice not found')
+
+  // Get all completed payments for this invoice
+  const { data: payments } = await supabase
+    .from('payments')
+    .select('amount, status, payment_date, mpesa_ref')
+    .eq('invoice_id', invoice_id)
+    .eq('status', 'completed')
+    .order('payment_date', { ascending: true })
+
+  // Calculate totals
+  const totalPaid = payments?.reduce((sum, p) => sum + Number(p.amount), 0) || 0
+  const invoiceTotal = Number(invoice.total_amount)
+  const remainingBalance = invoiceTotal - totalPaid
+
+  return {
+    ...invoice,
+    amount_paid: totalPaid,
+    remaining_balance: remainingBalance > 0 ? remainingBalance : 0,
+    is_paid: remainingBalance <= 0,
+    is_partial: totalPaid > 0 && remainingBalance > 0,
+    payments: payments || []
+  }
+}

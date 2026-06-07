@@ -21,6 +21,7 @@ app.use(helmet())
 app.use(cors({
   origin: [
     "https://puretap.vercel.app",
+    "https://portalpuretap.vercel.app",
     "http://localhost:5173",
     "http://localhost:5174"
   ],
