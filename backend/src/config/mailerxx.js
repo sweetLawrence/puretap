@@ -5,7 +5,8 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 const sendMail = async ({ to, subject, html, text }) => {
   try {
     const { data, error } = await resend.emails.send({
-      from: process.env.MAIL_FROM || 'PureTap Water <tsungulawrence@gmail.com>',
+      // from: process.env.MAIL_FROM || 'PureTap Water <tsungulawrence@gmail.com>',
+      from: 'Acme <onboarding@resend.dev>',
       to,
       subject,
       html,
