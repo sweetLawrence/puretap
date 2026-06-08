@@ -32,6 +32,29 @@ router.get('/search', requireRole('admin'), async (req, res) => {
 })
 
 // get single customer — admin or field_staff
+
+// customer portal — fetch own record
+router.get('/me', verifyToken, async (req, res) => {
+  try {
+    const customerId = req.user.customerId
+    if (!customerId) return sendError(res, 'Unauthorized', 403)
+
+    const { data, error } = await supabase
+      .from('customers')
+      .select('id, full_name, phone, email, account_no, customer_type, credit_balance, is_active')
+      .eq('id', customerId)
+      .single()
+
+    if (error) throw new Error(error.message)
+    sendSuccess(res, data)
+  } catch (err) {
+    sendError(res, err.message, 400)
+  }
+})
+
+
+
+
 router.get('/:id', requireRole('admin', 'field_staff','customer'), async (req, res) => {
   try {
     const customer = await customersService.getById(req.params.id)

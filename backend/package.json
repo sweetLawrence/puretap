@@ -13,6 +13,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@emailjs/nodejs": "^5.0.2",
     "@supabase/supabase-js": "^2.99.2",
     "africastalking": "^0.7.9",
     "bcryptjs": "^3.0.3",

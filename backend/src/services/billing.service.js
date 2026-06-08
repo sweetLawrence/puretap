@@ -1,3 +1,9 @@
+
+
+
+
+
+
 import supabase from '../config/supabase.js'
 import { INVOICE_NO_CONFIG } from '../utils/constants.js'
 
@@ -27,19 +33,6 @@ const calculateAmount = (units_consumed, customer_type, tariffs) => {
   return parseFloat(amount_due.toFixed(2))
 }
 
-// const generateInvoiceNo = async () => {
-//   const year = new Date().getFullYear()
-//   const { count } = await supabase
-//     .from('invoices')
-//     .select('*', { count: 'exact', head: true })
-
-//   const next = String((count || 0) + 1).padStart(5, '0')
-//   return `INV-${year}-${next}`
-// }
-
-
-
-
 const generateInvoiceNo = async () => {
   const { prefix, include_year, digits, separator } = INVOICE_NO_CONFIG
 
@@ -61,86 +54,6 @@ const generateInvoiceNo = async () => {
   // e.g. INV-00001
 }
 
-// export const generateInvoice = async (reading_id) => {
-//   // get reading with meter and customer
-//   const { data: reading, error: readingError } = await supabase
-//     .from('readings')
-//     .select(`
-//       *,
-//       meters (
-//         id,
-//         serial_no,
-//         customers (id, customer_type)
-//       )
-//     `)
-//     .eq('id', reading_id)
-//     .single()
-
-//   if (readingError || !reading) throw new Error('Reading not found')
-
-//   // block invoice generation for flagged readings
-//   if (['flagged_ocr_mismatch', 'flagged_both', 'pending_review'].includes(reading.status)) {
-//     throw new Error('Cannot generate invoice for a flagged reading — resolve it first')
-//   }
-
-//   // check invoice does not already exist for this reading
-//   const { data: existingInvoice } = await supabase
-//     .from('invoices')
-//     .select('id')
-//     .eq('reading_id', reading_id)
-//     .single()
-
-//   if (existingInvoice) throw new Error('Invoice already exists for this reading')
-
-//   const customer_id = reading.meters.customers.id
-//   const customer_type = reading.meters.customers.customer_type
-//   const units_consumed = parseFloat(reading.units_consumed)
-
-//   // get active tariffs
-//   const { data: tariffs, error: tariffError } = await supabase
-//     .from('tariffs')
-//     .select('*')
-//     .eq('is_active', true)
-
-//   if (tariffError || !tariffs.length) throw new Error('No active tariffs found')
-
-//   const amount_due = calculateAmount(units_consumed, customer_type, tariffs)
-//   const tax_amount = 0
-//   const total_amount = parseFloat((amount_due + tax_amount).toFixed(2))
-
-//   const invoice_no = await generateInvoiceNo()
-
-//   const billing_period_start = reading.reading_date
-//   const due_date = new Date(reading.reading_date)
-//   due_date.setDate(due_date.getDate() + 30)
-
-//   const { data: invoice, error: invoiceError } = await supabase
-//     .from('invoices')
-//     .insert({
-//       invoice_no,
-//       customer_id,
-//       reading_id,
-//       units_consumed,
-//       amount_due,
-//       tax_amount,
-//       total_amount,
-//       status: 'unpaid',
-//       due_date: due_date.toISOString().split('T')[0],
-//       billing_period_start,
-//       billing_period_end: due_date.toISOString().split('T')[0],
-//       created_at: new Date(),
-//       updated_at: new Date()
-//     })
-//     .select()
-//     .single()
-
-//   if (invoiceError) throw new Error(invoiceError.message)
-//   return invoice
-// }
-
-
-
-// 11th May 2026: Added credit carry-forward logic to invoice generation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5 
 export const generateInvoice = async (reading_id) => {
   // get reading with meter and customer
   const { data: reading, error: readingError } = await supabase
@@ -163,12 +76,12 @@ export const generateInvoice = async (reading_id) => {
     throw new Error('Cannot generate invoice for a flagged reading — resolve it first')
   }
 
-  // check duplicate invoice
-  const { data: existingInvoice } = await supabase
+  // ✅ FIXED: Use maybeSingle() to avoid error when no invoice exists
+  const { data: existingInvoice, error: existingError } = await supabase
     .from('invoices')
     .select('id')
     .eq('reading_id', reading_id)
-    .single()
+    .maybeSingle()
 
   if (existingInvoice) throw new Error('Invoice already exists for this reading')
 
@@ -195,7 +108,7 @@ export const generateInvoice = async (reading_id) => {
   due_date.setDate(due_date.getDate() + 30)
 
   // =====================================================
-  // 🔥 CREDIT CARRY-FORWARD LOGIC (INSERTED HERE)
+  // CREDIT CARRY-FORWARD LOGIC
   // =====================================================
 
   const { data: customer } = await supabase
@@ -255,11 +168,9 @@ export const generateInvoice = async (reading_id) => {
       })
   }
 
+  console.log(`✅ Invoice ${invoice.invoice_no} generated for reading ${reading_id}`)
   return invoice
 }
-
-
-
 
 export const getAll = async () => {
   const { data, error } = await supabase
@@ -330,11 +241,6 @@ export const updateStatus = async (id, status) => {
   return data
 }
 
-
-// EXPERIMENTA
-
-// Add these functions to your existing billing.service.js file
-
 // Get customer invoices with remaining balance calculation
 export const getCustomerInvoicesWithBalance = async (customer_id) => {
   const { data, error } = await supabase
@@ -389,11 +295,6 @@ export const getInvoiceWithBalance = async (id) => {
     is_fully_paid: remaining <= 0
   }
 }
-
-
-
-
-
 
 // Get invoice with calculated payment status
 export const getInvoiceWithPaymentStatus = async (invoice_id) => {

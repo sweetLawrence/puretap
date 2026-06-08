@@ -250,7 +250,9 @@ const notify = async (customer, subject, html) => {
   return results
 }
 
-// Helper function to calculate payment totals for an invoice
+
+
+
 const calculateInvoicePaymentTotals = async (invoiceId) => {
   // Get all successful payments for this invoice
   const { data: payments } = await supabase

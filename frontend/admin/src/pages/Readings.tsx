@@ -1,4 +1,6 @@
 
+import { usePolling } from '../hooks/usePolling'
+
 
 import { useEffect, useState } from 'react'
 import {
@@ -62,6 +64,8 @@ const MonthDivider = ({ label, count }: { label: string; count: number }) => (
   </div>
 )
 
+
+
 export default function Readings() {
   const isMobile = useMediaQuery('(max-width: 768px)')
 
@@ -118,7 +122,9 @@ export default function Readings() {
     }
   }
 
-  useEffect(() => { load() }, [])
+  // useEffect(() => { load() }, [])
+  usePolling(load, 8000)
+ 
 
   useEffect(() => {
     let data = [...readings]

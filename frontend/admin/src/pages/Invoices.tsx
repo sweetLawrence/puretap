@@ -6,6 +6,7 @@ import {
 } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import api from '../utils/api'
+import { usePolling } from '../hooks/usePolling'
 
 interface Customer {
   id: number
@@ -97,6 +98,7 @@ export default function Invoices() {
   const [downloadTo, setDownloadTo] = useState('')
   const [downloadStatus, setDownloadStatus] = useState<string | null>(null)
 
+
   const load = async () => {
     try {
       const invRes = await api.get('/invoices')
@@ -148,7 +150,8 @@ export default function Invoices() {
     }
   }
 
-  useEffect(() => { load() }, [])
+  // useEffect(() => { load() }, [])
+  usePolling(load, 8000)
 
   useEffect(() => {
     let data = [...invoices]
