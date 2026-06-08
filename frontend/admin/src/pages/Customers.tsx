@@ -1,8 +1,3 @@
-
-// NEW CODE FINAL
-
-
-
 import { useEffect, useState } from 'react'
 import {
   Paper, Title, Text, TextInput, Select, Button, Badge, Modal,
@@ -87,10 +82,11 @@ export default function Customers() {
       data = data.filter(c => {
         const nameMatch = c.full_name.toLowerCase().includes(q)
         const accountMatch = c.account_no.toLowerCase().includes(q)
+        const emailMatch = c.email?.toLowerCase().includes(q) || false
         const phoneMatch = qDigits.length > 0
           ? String(c.phone).replace(/\D/g, '').includes(qDigits)
           : false
-        return nameMatch || accountMatch || phoneMatch
+        return nameMatch || accountMatch || emailMatch || phoneMatch
       })
     }
     if (typeFilter) data = data.filter(c => c.customer_type === typeFilter)
@@ -206,6 +202,7 @@ export default function Customers() {
           <Table.Tr className="bg-gray-50">
             <Table.Th className="text-text-400 text-xs uppercase">Account No</Table.Th>
             <Table.Th className="text-text-400 text-xs uppercase">Name</Table.Th>
+            <Table.Th className="text-text-400 text-xs uppercase">Email</Table.Th>
             <Table.Th className="text-text-400 text-xs uppercase">Phone</Table.Th>
             <Table.Th className="text-text-400 text-xs uppercase">Type</Table.Th>
             <Table.Th className="text-text-400 text-xs uppercase">Status</Table.Th>
@@ -215,7 +212,7 @@ export default function Customers() {
         <Table.Tbody>
           {filtered.length === 0 ? (
             <Table.Tr>
-              <Table.Td colSpan={6} className="text-center text-text-300 py-8">
+              <Table.Td colSpan={7} className="text-center text-text-300 py-8">
                 No customers found
               </Table.Td>
             </Table.Tr>
@@ -223,7 +220,20 @@ export default function Customers() {
             <Table.Tr key={c.id}>
               <Table.Td className="text-text-600 font-semibold text-sm">{c.account_no}</Table.Td>
               <Table.Td className="text-text-500 text-sm">{c.full_name}</Table.Td>
-              <Table.Td className="text-text-400 text-sm">{String(c.phone)}</Table.Td>
+              <Table.Td className="text-text-400 text-sm">
+                {c.email ? (
+                  <a href={`mailto:${c.email}`} className="text-primary-500 hover:underline">
+                    {c.email}
+                  </a>
+                ) : (
+                  <span className="text-text-200">—</span>
+                )}
+              </Table.Td>
+              <Table.Td className="text-text-400 text-sm">
+                <a href={`tel:${c.phone}`} className="hover:underline">
+                  {String(c.phone)}
+                </a>
+              </Table.Td>
               <Table.Td>
                 <Badge size="sm" radius="sm" variant="light"
                   color={c.customer_type === 'commercial' ? 'blue' : 'teal'}>
@@ -292,10 +302,12 @@ export default function Customers() {
               <div className="flex items-start justify-between px-4 py-3 border-b border-gray-50">
                 <div className="min-w-0 mr-3">
                   <Text fw={700} size="sm" className="text-text-700">{c.full_name}</Text>
-                  <Text size="xs" className="text-text-400 mt-0.5">{String(c.phone)}</Text>
                   {c.email && (
-                    <Text size="xs" className="text-text-300 truncate">{c.email}</Text>
+                    <a href={`mailto:${c.email}`} className="text-primary-500 text-xs hover:underline block mt-0.5">
+                      {c.email}
+                    </a>
                   )}
+                  <Text size="xs" className="text-text-400 mt-1">{String(c.phone)}</Text>
                 </div>
                 <div className="text-right flex-shrink-0">
                   <Text size="xs" fw={700} className="text-text-600">{c.account_no}</Text>
@@ -355,7 +367,7 @@ export default function Customers() {
       <Paper shadow="xs" radius="lg" p="sm" className="bg-white mb-4">
         <Stack gap="sm">
           <TextInput
-            placeholder="Search name, phone or account..."
+            placeholder="Search name, email, phone or account..."
             value={search}
             onChange={e => setSearch(e.currentTarget.value)}
             radius="md"
@@ -505,6 +517,9 @@ export default function Customers() {
             <div className="bg-gray-50 rounded-xl p-4">
               <Text fw={600} size="sm" className="text-text-700">{toggleTarget.full_name}</Text>
               <Text size="xs" className="text-text-300">{toggleTarget.account_no}</Text>
+              {toggleTarget.email && (
+                <Text size="xs" className="text-text-300 mt-1">{toggleTarget.email}</Text>
+              )}
             </div>
 
             {toggleTarget.is_active ? (
@@ -567,8 +582,3 @@ export default function Customers() {
     </div>
   )
 }
-
-
-
-
-

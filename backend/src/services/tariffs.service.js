@@ -77,3 +77,43 @@ export const deactivate = async (id) => {
   if (error) throw new Error(error.message)
   return data
 }
+
+// NEW: Activate tariff
+export const activate = async (id) => {
+  const { data, error } = await supabase
+    .from('tariffs')
+    .update({ is_active: true, updated_at: new Date() })
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) throw new Error(error.message)
+  return data
+}
+
+
+
+
+// NEW: Delete tariff permanently
+export const deleteTariff = async (id) => {
+  // Optional: Check if tariff is being used in any invoices before deleting
+  const { count, error: checkError } = await supabase
+    .from('invoices')
+    .select('*', { count: 'exact', head: true })
+    .eq('tariff_id', id)  // Only if you have tariff_id in invoices table
+  
+  // If you want to prevent deletion if tariff is in use:
+  // if (count > 0) {
+  //   throw new Error('Cannot delete tariff that has been used in invoices')
+  // }
+  
+  const { data, error } = await supabase
+    .from('tariffs')
+    .delete()
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) throw new Error(error.message)
+  return data
+}

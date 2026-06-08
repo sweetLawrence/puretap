@@ -68,4 +68,29 @@ router.patch('/:id/deactivate', requireRole('admin'), async (req, res) => {
   }
 })
 
+
+
+
+// NEW: Activate tariff
+router.patch('/:id/activate', requireRole('admin'), async (req, res) => {
+  try {
+    const tariff = await tariffsService.activate(req.params.id)
+    sendSuccess(res, tariff, 200, 'Tariff activated successfully')
+  } catch (err) {
+    sendError(res, err.message, 400)
+  }
+})
+
+
+// NEW: Delete tariff permanently
+router.delete('/:id', requireRole('admin'), async (req, res) => {
+  try {
+    const tariff = await tariffsService.deleteTariff(req.params.id)
+    sendSuccess(res, tariff, 200, 'Tariff deleted successfully')
+  } catch (err) {
+    sendError(res, err.message, 400)
+  }
+})
+
+
 export default router

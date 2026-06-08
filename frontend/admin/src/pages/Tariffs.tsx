@@ -16,7 +16,6 @@ import {
   Tooltip,
   NumberInput
 } from '@mantine/core'
-// import { DateInput } from '@mantine/dates'
 import api from '../utils/api'
 
 interface Tariff {
@@ -31,16 +30,6 @@ interface Tariff {
   effective_from: string
 }
 
-// const emptyForm = {
-//   name: '',
-//   customer_type: 'domestic',
-//   min_units: 0,
-//   max_units: '' as number | '',
-//   rate_per_unit: 0,
-//   fixed_charge: 0,
-//   effective_from: new Date()
-// }
-
 const emptyForm = {
   name: '',
   customer_type: 'domestic',
@@ -48,7 +37,7 @@ const emptyForm = {
   max_units: '' as number | '',
   rate_per_unit: 0,
   fixed_charge: 0,
-  effective_from: new Date().toISOString().split('T')[0]  // string from the start
+  effective_from: new Date().toISOString().split('T')[0]
 }
 
 export default function Tariffs () {
@@ -63,6 +52,11 @@ export default function Tariffs () {
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
+  
+  // Delete confirmation states
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+  const [tariffToDelete, setTariffToDelete] = useState<Tariff | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   const load = async () => {
     try {
@@ -97,35 +91,20 @@ export default function Tariffs () {
     setModalOpen(true)
   }
 
-  // const openEdit = (t: Tariff) => {
-  //   setEditTarget(t)
-  //   setForm({
-  //     name: t.name,
-  //     customer_type: t.customer_type,
-  //     min_units: t.min_units,
-  //     max_units: t.max_units ?? '',
-  //     rate_per_unit: t.rate_per_unit,
-  //     fixed_charge: t.fixed_charge,
-  //     effective_from: new Date(t.effective_from)
-  //   })
-  //   setFormError('')
-  //   setModalOpen(true)
-  // }
-
   const openEdit = (t: Tariff) => {
-  setEditTarget(t)
-  setForm({
-    name: t.name,
-    customer_type: t.customer_type,
-    min_units: t.min_units,
-    max_units: t.max_units ?? '',
-    rate_per_unit: t.rate_per_unit,
-    fixed_charge: t.fixed_charge,
-    effective_from: t.effective_from.split('T')[0]  // already a string
-  })
-  setFormError('')
-  setModalOpen(true)
-}
+    setEditTarget(t)
+    setForm({
+      name: t.name,
+      customer_type: t.customer_type,
+      min_units: t.min_units,
+      max_units: t.max_units ?? '',
+      rate_per_unit: t.rate_per_unit,
+      fixed_charge: t.fixed_charge,
+      effective_from: t.effective_from.split('T')[0]
+    })
+    setFormError('')
+    setModalOpen(true)
+  }
 
   const handleSave = async () => {
     if (!form.name || form.rate_per_unit === undefined) {
@@ -135,24 +114,15 @@ export default function Tariffs () {
     setSaving(true)
     setFormError('')
     try {
-      // const payload = {
-      //   ...form,
-      //   max_units: form.max_units === '' ? null : form.max_units,
-      //   effective_from: form.effective_from instanceof Date
-      //     ? form.effective_from.toISOString().split('T')[0]
-      //     : form.effective_from
-      // }
-
-    const payload = {
-  name: form.name,
-  customer_type: form.customer_type,
-  min_units: String(form.min_units),
-  max_units: form.max_units === '' ? null : String(form.max_units),
-  rate_per_unit: String(form.rate_per_unit),
-  fixed_charge: String(form.fixed_charge),
-  effective_from: form.effective_from   // already a clean date string
-}
-
+      const payload = {
+        name: form.name,
+        customer_type: form.customer_type,
+        min_units: String(form.min_units),
+        max_units: form.max_units === '' ? null : String(form.max_units),
+        rate_per_unit: String(form.rate_per_unit),
+        fixed_charge: String(form.fixed_charge),
+        effective_from: form.effective_from
+      }
 
       if (editTarget) {
         await api.patch(`/tariffs/${editTarget.id}`, payload)
@@ -168,13 +138,46 @@ export default function Tariffs () {
     }
   }
 
+  // NEW: Activate tariff
+  const handleActivate = async (id: number) => {
+    try {
+      await api.patch(`/tariffs/${id}/activate`)
+      load()
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Failed to activate tariff')
+    }
+  }
+
+  // Deactivate tariff
   const handleDeactivate = async (id: number) => {
-    if (!confirm('Deactivate this tariff slab?')) return
     try {
       await api.patch(`/tariffs/${id}/deactivate`)
       load()
-    } catch {
-      alert('Failed to deactivate tariff')
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Failed to deactivate tariff')
+    }
+  }
+
+  // Delete confirmation
+  const confirmDelete = (tariff: Tariff) => {
+    setTariffToDelete(tariff)
+    setDeleteModalOpen(true)
+  }
+
+  // Execute delete
+  const handleDelete = async () => {
+    if (!tariffToDelete) return
+    
+    setDeleting(true)
+    try {
+      await api.delete(`/tariffs/${tariffToDelete.id}`)
+      setDeleteModalOpen(false)
+      setTariffToDelete(null)
+      load()
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Failed to delete tariff')
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -347,11 +350,38 @@ export default function Tariffs () {
                               </svg>
                             </ActionIcon>
                           </Tooltip>
+                          
+                          {/* NEW: Activate button - only show for inactive tariffs */}
+                          {!t.is_active && (
+                            <Tooltip label='Activate'>
+                              <ActionIcon
+                                variant='light'
+                                color='green'
+                                radius='md'
+                                size='sm'
+                                onClick={() => handleActivate(t.id)}
+                              >
+                                <svg
+                                  width='14'
+                                  height='14'
+                                  viewBox='0 0 24 24'
+                                  fill='none'
+                                  stroke='currentColor'
+                                  strokeWidth='2'
+                                >
+                                  <path d='M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34' />
+                                  <polygon points="18 2 22 6 12 16 8 16 8 12 18 2" />
+                                </svg>
+                              </ActionIcon>
+                            </Tooltip>
+                          )}
+
+                          {/* Deactivate button - only show for active tariffs */}
                           {t.is_active && (
                             <Tooltip label='Deactivate'>
                               <ActionIcon
                                 variant='light'
-                                color='red'
+                                color='orange'
                                 radius='md'
                                 size='sm'
                                 onClick={() => handleDeactivate(t.id)}
@@ -365,16 +395,36 @@ export default function Tariffs () {
                                   strokeWidth='2'
                                 >
                                   <circle cx='12' cy='12' r='10' />
-                                  <line
-                                    x1='4.93'
-                                    y1='4.93'
-                                    x2='19.07'
-                                    y2='19.07'
-                                  />
+                                  <line x1='4.93' y1='4.93' x2='19.07' y2='19.07' />
                                 </svg>
                               </ActionIcon>
                             </Tooltip>
                           )}
+
+                          {/* Delete button - always visible */}
+                          <Tooltip label='Delete Permanently'>
+                            <ActionIcon
+                              variant='light'
+                              color='red'
+                              radius='md'
+                              size='sm'
+                              onClick={() => confirmDelete(t)}
+                            >
+                              <svg
+                                width='14'
+                                height='14'
+                                viewBox='0 0 24 24'
+                                fill='none'
+                                stroke='currentColor'
+                                strokeWidth='2'
+                              >
+                                <path d='M3 6h18' />
+                                <path d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2' />
+                                <line x1='10' y1='11' x2='10' y2='17' />
+                                <line x1='14' y1='11' x2='14' y2='17' />
+                              </svg>
+                            </ActionIcon>
+                          </Tooltip>
                         </Group>
                       </Table.Td>
                     </Table.Tr>
@@ -386,6 +436,7 @@ export default function Tariffs () {
         )}
       </Paper>
 
+      {/* Add/Edit Modal */}
       <Modal
         opened={modalOpen}
         onClose={() => setModalOpen(false)}
@@ -406,12 +457,10 @@ export default function Tariffs () {
           <TextInput
             label='Name'
             placeholder='Domestic block 1'
-            radius='md'
             value={form.name}
-            // onChange={e => setForm({ ...form, name: e.currentTarget.value })}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-  setForm({ ...form, name: e.currentTarget.value })
-}
+              setForm({ ...form, name: e.currentTarget.value })
+            }
           />
           <Select
             label='Customer Type'
@@ -465,30 +514,17 @@ export default function Tariffs () {
               onChange={val => setForm({ ...form, fixed_charge: Number(val) })}
             />
           </Group>
-          {/* <DateInput
-            label='Effective From'
-            radius='md'
-            value={
-              form.effective_from instanceof Date
-                ? form.effective_from
-                : new Date(form.effective_from)
-            }
-            onChange={val =>
-              setForm({ ...form, effective_from: val || new Date() })
-            }
-          /> */}
-
           <div>
-  <label className="block text-sm font-medium text-text-500 mb-1">
-    Effective From
-  </label>
-  <input
-    type="date"
-    value={form.effective_from}
-    onChange={e => setForm({ ...form, effective_from: e.currentTarget.value })}
-    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-text-600 focus:outline-none focus:ring-2 focus:ring-primary-300"
-  />
-</div>
+            <label className="block text-sm font-medium text-text-500 mb-1">
+              Effective From
+            </label>
+            <input
+              type="date"
+              value={form.effective_from}
+              onChange={e => setForm({ ...form, effective_from: e.currentTarget.value })}
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-text-600 focus:outline-none focus:ring-2 focus:ring-primary-300"
+            />
+          </div>
           <Button
             fullWidth
             radius='md'
@@ -500,15 +536,66 @@ export default function Tariffs () {
           </Button>
         </Stack>
       </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        opened={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        title={
+          <Text fw={600} className='text-text-600'>
+            Delete Tariff
+          </Text>
+        }
+        radius='lg'
+        size='sm'
+      >
+        <Stack gap='md'>
+          <Alert color='red' variant='light' radius='md'>
+            <Text size='sm' fw={600}>⚠️ Warning: This action cannot be undone!</Text>
+            <Text size='xs' className='mt-1'>
+              Deleting this tariff will permanently remove it from the system.
+            </Text>
+          </Alert>
+          
+          {tariffToDelete && (
+            <div className='bg-gray-50 rounded-lg p-3'>
+              <Text size='sm' className='text-text-500'>Tariff Details:</Text>
+              <Text size='sm' fw={600} className='text-text-700'>{tariffToDelete.name}</Text>
+              <Text size='xs' className='text-text-400'>
+                {tariffToDelete.customer_type} | {tariffToDelete.min_units} — {tariffToDelete.max_units ?? '∞'} m³
+              </Text>
+            </div>
+          )}
+          
+          <Group grow>
+            <Button
+              variant='outline'
+              radius='md'
+              onClick={() => setDeleteModalOpen(false)}
+              disabled={deleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              color='red'
+              radius='md'
+              loading={deleting}
+              onClick={handleDelete}
+              className='bg-red-600 hover:bg-red-700'
+            >
+              {deleting ? 'Deleting...' : 'Yes, Delete Permanently'}
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
     </div>
   )
 }
 
-// need this for TextInput used in name
+// TextInput component
 function TextInput ({
   label,
   placeholder,
-  // radius,
   value,
   onChange,
   disabled
