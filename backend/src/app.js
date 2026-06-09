@@ -6,6 +6,17 @@ import dotenv from 'dotenv'
 import routes from './routes/index.js'
 import { errorHandler } from './middlewares/errorHandler.js'
 import { auditLog } from './middlewares/auditLog.js'
+// import { swaggerDocs } from './config/swagger.js'
+
+import swaggerUi from 'swagger-ui-express'
+
+import fs from 'fs'
+
+
+const swaggerFile = JSON.parse(
+  fs.readFileSync('./src/config/swagger-output.json', 'utf8')
+)
+
 
 dotenv.config()
 
@@ -37,7 +48,7 @@ app.use(auditLog)
 app.use('/api/v1', routes)
 app.use(errorHandler)
 
-
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerFile))
 
 
 app.get('/test-mail', async (req, res) => {
@@ -49,6 +60,9 @@ app.get('/test-mail', async (req, res) => {
 
   res.json(result)
 })
+
+
+
 
 export default app
 // ```
